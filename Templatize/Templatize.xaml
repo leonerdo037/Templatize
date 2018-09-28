@@ -1,0 +1,19 @@
+<Window 
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+       Title="Templatize" Height="300" Width="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Loaded="Window_Loaded">
+    <Grid>
+        <StackPanel x:Name="SP_Stage">
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="TB_Name" Width="75"/>
+                <TextBox x:Name="TB_Description" Width="125"/>
+                <Button Content="Create" Click="B_Create_Click" Width="80"/>
+            </StackPanel>
+            <ListBox x:Name="LB_List"/>
+            <Button Content="Open Project" Click="Button_Click"/>
+        </StackPanel>
+        <StackPanel x:Name="SP_Work">
+            
+        </StackPanel>
+    </Grid>
+</Window> 
