@@ -1,2 +1,2 @@
 # Templatize
-A generic template generator with a GUI based service portal.
+A generic template generator.
