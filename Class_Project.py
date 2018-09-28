@@ -13,29 +13,33 @@ class Project:
         #if not os.path.exists(self.projectDIR):
         #    os.makedirs(self.projectDIR)
 
-    def UpdateMetaData(data):
+    def UpdateMetaData(self,data):
+        print(data)
         pass
 
-    def GetProjectData(projectName, key):
+    def GetProjectData(self,projectName, key):
         ProjectPath=os.path.join(self.projectDIR, projectName)
-        metadata=open(os.path.join(ProjectPath, ".metadata"),"r+")
+        metaFile=open(os.path.join(ProjectPath, ".metadata"),"r+")
         jsonContent=json.loads(metaFile.read())
         return jsonContent[key]
 
-    def GetTemplateData(projectName, templateName, key):
+    def GetTemplateData(self, projectName, templateName, key):
         ProjectPath=os.path.join(self.projectDIR, projectName)
-        TempPath=os.path.join(ProjectPath, templateName)
-        metadata=open(os.path.join(TempPath, ".metadata"),"r+")
+        metaFile=open(os.path.join(ProjectPath, ".metadata"),"r+")
         jsonContent=json.loads(metaFile.read())
-        return jsonContent[key]
+        for template in jsonContent["Templates"]:
+            if template["TemplateName"]==templateName:
+                return template[key]
 
-    def GetModuleData(projectName, templateName, moduleName, key):
+    def GetModuleData(self, projectName, templateName, moduleName, key):
         ProjectPath=os.path.join(self.projectDIR, projectName)
-        TempPath=os.path.join(ProjectPath, templateName)
-        ModulePath=os.path.join(TempPath, moduleName)
-        metadata=open(os.path.join(ModulePath, ".metadata"),"r+")
+        metaFile=open(os.path.join(ProjectPath, ".metadata"),"r+")
         jsonContent=json.loads(metaFile.read())
-        return jsonContent[key]
+        for template in jsonContent["Templates"]:
+            if template["TemplateName"]==templateName:
+                for module in template["Modules"]:
+                    if module["ModuleName"]==moduleName:
+                        return module[key]
 
     def CreateProject(self, projectName, projectDescription):
         ProjectPath=os.path.join(self.projectDIR, projectName)
@@ -43,7 +47,7 @@ class Project:
             raise err.Conflict("A Project with the same name already exists !")
         else:
             os.makedirs(ProjectPath)
-            metadata=open(os.path.join(ProjectPath, ".metadata"),"w+")
+            metaFile=open(os.path.join(ProjectPath, ".metadata"),"w+")
             metaFile.write(json.dumps({'ProjectName': projectName, 'ProjectDescription': projectDescription,'Templates':[]}, sort_keys=True, indent=4, separators=(',', ': ')))
             metaFile.close()
             self.curProject=ProjectPath
@@ -58,7 +62,7 @@ class Project:
                 raise err.Conflict("A Template with the same name already exists !")
             # Create Template
             os.makedirs(os.path.join(ProjectPath, templateName))
-            metadata=open(os.path.join(ProjectPath, ".metadata"),"r+")
+            metaFile=open(os.path.join(ProjectPath, ".metadata"),"r+")
             jsonContent=json.loads(metaFile.read())
             jsonContent["Templates"].append({'TemplateName': templateName, 'TemplateDescription': templateDescription, 'SectionCount': sectionCount, 'Modules':[]})
             metaFile.seek(0)
@@ -73,7 +77,7 @@ class Project:
         TempPath=os.path.join(ProjectPath, templateName)
         ModulePath=os.path.join(TempPath, moduleName)
         # Fetching metadata
-        metadata=open(os.path.join(ProjectPath, ".metadata"),"r+")
+        metaFile=open(os.path.join(ProjectPath, ".metadata"),"r+")
         jsonContent=json.loads(metaFile.read())
         for temp in jsonContent["Templates"]:
             if temp["TemplateName"]==templateName:

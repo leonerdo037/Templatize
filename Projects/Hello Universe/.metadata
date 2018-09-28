@@ -9,7 +9,12 @@
             "TemplateName": "Test1"
         },
         {
-            "Modules": [],
+            "Modules": [
+                {
+                    "ModuleName": "King",
+                    "Section": 4
+                }
+            ],
             "SectionCount": 7,
             "TemplateDescription": "Dummy",
             "TemplateName": "Test2"
