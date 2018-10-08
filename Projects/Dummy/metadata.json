@@ -1,0 +1,14 @@
+{
+    "ProjectDescription": "Test Project",
+    "ProjectName": "Dummy",
+    "ProjectVariables": [],
+    "Templates": [
+        {
+            "GroupCount": 3,
+            "Modules": [],
+            "TemplateDescription": "FirstTest",
+            "TemplateName": "testTemp",
+            "TemplateVariables": []
+        }
+    ]
+}

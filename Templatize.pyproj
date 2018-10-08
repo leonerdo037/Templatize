@@ -22,10 +22,23 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Class_Error.py" />
-    <Compile Include="Class_Project.py" />
-    <Compile Include="Class_Settings.py" />
+    <Compile Include="Errors.py" />
+    <Compile Include="FileHandler.py" />
+    <Compile Include="JSONHandler.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project.py" />
+    <Compile Include="Settings.py" />
+    <Compile Include="Module.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Template.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Templatize.py" />
+    <Compile Include="Variable.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|VisualStudio|IronPython 2.7" />
