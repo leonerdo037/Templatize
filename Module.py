@@ -9,18 +9,14 @@ class Module:
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
 
     def CreateModule(self, projectName, templateName, moduleName, moduleDescription, group, data):
-        # Checking Project Path
+        # Checking Path
         ProjectPath=os.path.join(self.homeDIR, projectName)
-        if fl.ValidatePath(ProjectPath, "Project", new=False)==False: return
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
-        # Checking Template Path
         TempPath=os.path.join(ProjectPath, templateName)
-        if fl.ValidatePath(TempPath, "Template", new=False)==False: return
-        # Checking Module Path
         ModulePath=os.path.join(TempPath, moduleName)
-        if fl.ValidatePath(ModulePath, "Module", new=True)==False: return
+        if fl.ValidateModule(ProjectPath, TempPath, ModulePath, new=True)==False: return
         # Fetching metadata
-        jsonContent=json.loads(metaDataFile.read())
+        jsonContent=js.Load(fl.Read(metaDataFile))
         for temp in jsonContent["Templates"]:
             if temp["TemplateName"]==templateName:
                 # Validating Count
@@ -42,16 +38,12 @@ class Module:
     def OpenModule(self, projectName, templateName, moduleName):
         # Checking Project Path
         ProjectPath=os.path.join(self.homeDIR, projectName)
-        if fl.ValidatePath(ProjectPath, "Project", new=False)==False: return
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
-        # Checking Template Path
         TempPath=os.path.join(ProjectPath, templateName)
-        if fl.ValidatePath(TempPath, "Template", new=False)==False: return
-        # Checking Module Path
         ModulePath=os.path.join(TempPath, moduleName)
-        if fl.ValidatePath(ModulePath, "Module", new=False)==False: return
+        if fl.ValidateModule(ProjectPath, TempPath, ModulePath, new=False)==False: return
         # Return Data
-        jsonContent=js.Load(fl.Read(os.path.join(ProjectPath, "metadata.json")))
+        jsonContent=js.Load(fl.Read(metaDataFile))
         for templates in jsonContent["Templates"]:
             # Iterating Over The Templates
             if templates["TemplateName"]==templateName:

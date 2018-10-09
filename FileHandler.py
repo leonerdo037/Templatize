@@ -18,6 +18,17 @@ def ValidatePath(path, pathType, new=False):
             raise err.Conflict("There are no {0} with the name '{1}'".format(pathType, baseName))
             return False
 
+def ValidateProject(path, new=False):
+    return ValidatePath(path, "Project", new)
+
+def ValidateTemplate(projectPath, templatePath, new=False):
+    ValidateProject(projectPath, False)
+    return ValidatePath(templatePath, "Template", new)
+
+def ValidateModule(projectPath, templatePath, modulePath, new=False):
+    ValidateTemplate(projectPath, templatePath, False)
+    return ValidatePath(modulePath, "Module", new)
+
 def Write(filePath, data, rewrite=False):
     file=open(filePath,"w+")
     if rewrite:

@@ -26,11 +26,12 @@ def ModuleJSON(moduleName, moduleDescription, group):
             'Group': group
            }
 
-def VariableJSON(variableName, variableType, variableScope="System"):
+def VariableJSON(variableName, variableType, variableScope, variableMode="System"):
     return {
             'VariableName': variableName,
             'VariableType': variableType,
-            'VariableScope': variableScope
+            'VariableScope': variableScope,
+            'VariableMode': variableMode
            }
 
 def Dump(data):

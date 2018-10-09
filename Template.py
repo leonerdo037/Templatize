@@ -9,13 +9,11 @@ class Template:
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
 
     def CreateTemplate(self, projectName, templateName, templateDescription, groupCount):
-        # Checking Project Path
+        # Checking Path
         ProjectPath=os.path.join(self.homeDIR, projectName)
-        if fl.ValidatePath(ProjectPath, "Project", new=False)==False: return
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
-        # Checking Template Path
         TempPath=os.path.join(ProjectPath, templateName)
-        if fl.ValidatePath(TempPath, "Template", new=True)==False: return
+        if fl.ValidateTemplate(ProjectPath, TempPath, new=True)==False: return
         # Create Template
         os.makedirs(TempPath)
         jsonContent=js.Load(fl.Read(metaDataFile))
@@ -28,15 +26,13 @@ class Template:
         return os.listdir(ProjectPath)
 
     def OpenTemplate(self, projectName, templateName):
-        # Checking Project Path
+        # Checking Path
         ProjectPath=os.path.join(self.homeDIR, projectName)
-        if fl.ValidatePath(ProjectPath, "Project", new=False)==False: return
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
-        # Checking Template Path
         TempPath=os.path.join(ProjectPath, templateName)
-        if fl.ValidatePath(TempPath, "Template", new=False)==False: return
+        if fl.ValidateTemplate(ProjectPath, TempPath, new=False)==False: return
         # Return Data
-        jsonContent=js.Load(fl.Read(os.path.join(ProjectPath, "metadata.json")))
+        jsonContent=js.Load(fl.Read(metaDataFile))
         for template in jsonContent["Templates"]:
             if template["TemplateName"]==templateName:
                 return template

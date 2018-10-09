@@ -19,11 +19,12 @@ class Project:
 
     def CreateProject(self, projectName, projectDescription):
         ProjectPath=os.path.join(self.homeDIR, projectName)
+        metaDataFile=os.path.join(ProjectPath, "metadata.json")
         # Creating Directory
-        if fl.ValidatePath(ProjectPath, "Project", new=True)==False: return
+        if fl.ValidateProject(ProjectPath, new=True)==False: return
         os.makedirs(ProjectPath)
         # Writing File
-        fl.Write(os.path.join(ProjectPath, "metadata.json"), js.Dump(js.ProjectJSON(projectName, projectDescription)))
+        fl.Write(metaDataFile, js.Dump(js.ProjectJSON(projectName, projectDescription)))
         return "Project '{0}' created successfully !".format(projectName)
 
     def ListProjects(self):
@@ -31,8 +32,9 @@ class Project:
 
     def OpenProject(self, projectName):
         ProjectPath=os.path.join(self.homeDIR, projectName)
-        if fl.ValidatePath(os.path.join(self.homeDIR, projectName), "Project")==False: return
-        jsonContent=js.Load(file.Read(os.path.join(ProjectPath, "metadata.json")))
+        metaDataFile=os.path.join(ProjectPath, "metadata.json")
+        if fl.ValidateProject(ProjectPath, new=False)==False: return
+        jsonContent=js.Load(file.Read(metaDataFile))
         return jsonContent
 
     def GetProjectData(self, projectName, key):
