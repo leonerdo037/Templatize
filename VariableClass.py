@@ -3,10 +3,9 @@ import Errors as err
 import Settings as props
 import FileHandler as fl
 import JSONHandler as js
-from Project import Project
-from Template import Template
-from Module import Module
-from Variable import Variable
+from ProjectClass import Project
+from TemplateClass import Template
+from ModuleClass import Module
 
 class Variable:
     

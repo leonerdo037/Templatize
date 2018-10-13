@@ -41,4 +41,6 @@ def Write(filePath, data, rewrite=False):
 
 def Read(filePath):
     file=open(filePath,"r+")
-    return file.read()
+    output=file.read()
+    file.close()
+    return output

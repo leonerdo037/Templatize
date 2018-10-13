@@ -1,0 +1,14 @@
+{
+    "ProjectDescription": "Test Project",
+    "ProjectName": "Hello Universe",
+    "ProjectVariables": [],
+    "Templates": [
+        {
+            "GroupCount": 3,
+            "Modules": [],
+            "TemplateDescription": "Azure ARM template",
+            "TemplateName": "Azure",
+            "TemplateVariables": []
+        }
+    ]
+}

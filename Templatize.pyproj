@@ -27,16 +27,19 @@
     <Compile Include="JSONHandler.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Project.py" />
+    <Compile Include="ProjectClass.py" />
     <Compile Include="Settings.py" />
-    <Compile Include="Module.py">
+    <Compile Include="ModuleClass.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Template.py">
+    <Compile Include="TemplateClass.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Templatize.py" />
-    <Compile Include="Variable.py">
+    <Compile Include="VariableClass.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="__init__%28%29.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
