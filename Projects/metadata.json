@@ -1,3 +1,10 @@
 {
-    "GlobalVariables": []
+    "GlobalVariables": [
+        {
+            "VariableDescription": "Company name",
+            "VariableMode": "System",
+            "VariableName": "Header",
+            "VariableType": "String"
+        }
+    ]
 }

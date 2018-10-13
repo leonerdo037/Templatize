@@ -1,14 +1,42 @@
 {
     "ProjectDescription": "Test Project",
     "ProjectName": "Hello Universe",
-    "ProjectVariables": [],
+    "ProjectVariables": [
+        {
+            "VariableDescription": "Tenant ID of Azure",
+            "VariableMode": "System",
+            "VariableName": "TenantID",
+            "VariableType": "String"
+        }
+    ],
     "Templates": [
         {
             "GroupCount": 3,
-            "Modules": [],
+            "Modules": [
+                {
+                    "Group": 2,
+                    "ModuleDescription": "VM Template",
+                    "ModuleName": "Storage",
+                    "ModuleVariables": [
+                        {
+                            "VariableDescription": "Size of the storage",
+                            "VariableMode": "User",
+                            "VariableName": "Storage Size",
+                            "VariableType": "Number"
+                        }
+                    ]
+                }
+            ],
             "TemplateDescription": "Azure ARM template",
             "TemplateName": "Azure",
-            "TemplateVariables": []
+            "TemplateVariables": [
+                {
+                    "VariableDescription": "Resource group from Azure",
+                    "VariableMode": "System",
+                    "VariableName": "Resource Group",
+                    "VariableType": "List"
+                }
+            ]
         }
     ]
 }

@@ -66,3 +66,16 @@ class Template:
     def GetTemplateVariables(self, projectName, templateName):
         jsonContent=self.OpenTemplate(projectName, templateName)
         return jsonContent["TemplateVariables"]
+
+    def CreateTemplateVariable(self, projectName, templateName, variableName, variableDescription, variableType):
+        ProjectPath=os.path.join(self.homeDIR, projectName)
+        metaDataFile=os.path.join(ProjectPath, "metadata.json")
+        jsonContent=js.Load(fl.Read(metaDataFile))
+        for variable in self.GetTemplateVariables(projectName, templateName):
+            if variable["VariableName"]==variableName:
+                raise err.Conflict("A Template Variable with the name '{0}' already exists !".format(variableName))
+                return None
+        index=js.GetJSONIndex(jsonContent["Templates"], "TemplateName", templateName)
+        jsonContent["Templates"][int(index[0])]["TemplateVariables"].append(js.VariableJSON(variableName, variableDescription, variableType))
+        fl.Write(metaDataFile, js.Dump(jsonContent), True)
+        return "Variable '{0}' created successfully !".format(variableName)

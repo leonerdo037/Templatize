@@ -34,6 +34,20 @@ class Project:
     def GetProjectList(self):
         return os.listdir(self.homeDIR)
 
+    def GetGlobalVariables(self):
+        jsonContent=js.Load(fl.Read(self.globalDataFile))
+        return jsonContent["GlobalVariables"]
+
+    def CreateGlobalVariable(self, variableName, variableDescription, variableType):
+        jsonContent=js.Load(fl.Read(self.globalDataFile))
+        for variable in jsonContent["GlobalVariables"]:
+            if variable["VariableName"]==variableName:
+                raise err.Conflict("A Global Variable with the name '{0}' already exists !".format(variableName))
+                return None
+        jsonContent["GlobalVariables"].append(js.VariableJSON(variableName, variableDescription, variableType))
+        fl.Write(self.globalDataFile, js.Dump(jsonContent), True)
+        return "Variable '{0}' created successfully !".format(variableName)
+
     def OpenProject(self, projectName):
         ProjectPath=os.path.join(self.homeDIR, projectName)
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
@@ -56,3 +70,15 @@ class Project:
     def GetTemplateList(self, projectName):
         jsonContent=self.OpenProject(projectName)
         return jsonContent["Templates"]
+
+    def CreateProjectVariable(self, projectName, variableName, variableDescription, variableType):
+        ProjectPath=os.path.join(self.homeDIR, projectName)
+        metaDataFile=os.path.join(ProjectPath, "metadata.json")
+        jsonContent=js.Load(fl.Read(metaDataFile))
+        for variable in jsonContent["ProjectVariables"]:
+            if variable["VariableName"]==variableName:
+                raise err.Conflict("A Project Variable with the name '{0}' already exists !".format(variableName))
+                return None
+        jsonContent["ProjectVariables"].append(js.VariableJSON(variableName, variableDescription, variableType))
+        fl.Write(metaDataFile, js.Dump(jsonContent), True)
+        return "Variable '{0}' created successfully !".format(variableName)

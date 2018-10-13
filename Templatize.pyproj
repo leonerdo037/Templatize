@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>Templatize</Name>
     <RootNamespace>Templatize</RootNamespace>
-    <InterpreterId>Global|VisualStudio|IronPython 2.7</InterpreterId>
+    <InterpreterId>Global|VisualStudio|Ironpython 2.7</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,7 +44,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|VisualStudio|IronPython 2.7" />
+    <InterpreterReference Include="Global|VisualStudio|Ironpython 2.7" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

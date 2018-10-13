@@ -1,11 +1,15 @@
 import json
 import Errors as err
+from collections import OrderedDict
+
+acceptedTypes=["String", "Number", "List", "Dictionary"]
+acceptedModes=["System", "User"]
 
 def Dump(data):
     return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
 def Load(data):
-    return json.loads(data)
+    return json.loads(data)#, object_pairs_hook=OrderedDict
 
 def GlobalJSON(asJSON=False):
     output={
@@ -45,11 +49,17 @@ def ModuleJSON(moduleName, moduleDescription, group, asJSON=False):
     if asJSON: return Dump(output)
     else: return output
 
-def VariableJSON(variableName, variableType, variableScope, variableMode="System", asJSON=False):
+def VariableJSON(variableName, variableDescription, variableType, variableMode="System", asJSON=False):
+    if variableType not in acceptedTypes:
+        raise err.Conflict("Unsupported variable type !")
+        return None
+    if variableMode not in acceptedModes:
+        raise err.Conflict("Unsupported variable mode !")
+        return None
     output={
             'VariableName': variableName,
+            'VariableDescription': variableDescription,
             'VariableType': variableType,
-            'VariableScope': variableScope,
             'VariableMode': variableMode
            }
     if asJSON: return Dump(output)
@@ -63,7 +73,7 @@ def GetJSON(jsonArray, searchKey, searchValue):
     return result
 
 def GetJSONIndex(jsonArray, searchKey, searchValue):
-    result=[i for i in enumerate(jsonArray) if i[searchKey]==searchValue]
+    result=[value for (value,key) in enumerate(jsonArray) if key[searchKey]==searchValue]
     # Validating existance of data
     if len(result)==0:
         return None
