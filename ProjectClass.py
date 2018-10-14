@@ -38,13 +38,13 @@ class Project:
         jsonContent=js.Load(fl.Read(self.globalDataFile))
         return jsonContent["GlobalVariables"]
 
-    def CreateGlobalVariable(self, variableName, variableDescription, variableType):
+    def CreateGlobalVariable(self, variableName, variableDescription, variableType, value):
         jsonContent=js.Load(fl.Read(self.globalDataFile))
         for variable in jsonContent["GlobalVariables"]:
             if variable["VariableName"]==variableName:
                 raise err.Conflict("A Global Variable with the name '{0}' already exists !".format(variableName))
                 return None
-        jsonContent["GlobalVariables"].append(js.VariableJSON(variableName, variableDescription, variableType))
+        jsonContent["GlobalVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, value, "Static"))
         fl.Write(self.globalDataFile, js.Dump(jsonContent), True)
         return "Variable '{0}' created successfully !".format(variableName)
 
@@ -71,7 +71,7 @@ class Project:
         jsonContent=self.OpenProject(projectName)
         return jsonContent["Templates"]
 
-    def CreateProjectVariable(self, projectName, variableName, variableDescription, variableType):
+    def CreateProjectVariable(self, projectName, variableName, variableDescription, variableType, value):
         ProjectPath=os.path.join(self.homeDIR, projectName)
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
         jsonContent=js.Load(fl.Read(metaDataFile))
@@ -79,6 +79,6 @@ class Project:
             if variable["VariableName"]==variableName:
                 raise err.Conflict("A Project Variable with the name '{0}' already exists !".format(variableName))
                 return None
-        jsonContent["ProjectVariables"].append(js.VariableJSON(variableName, variableDescription, variableType))
+        jsonContent["ProjectVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, value, "Static"))
         fl.Write(metaDataFile, js.Dump(jsonContent), True)
         return "Variable '{0}' created successfully !".format(variableName)

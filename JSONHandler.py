@@ -3,7 +3,7 @@ import Errors as err
 from collections import OrderedDict
 
 acceptedTypes=["String", "Number", "List", "Dictionary"]
-acceptedModes=["System", "User"]
+acceptedModes=["Static", "Dynamic", "User"]
 
 def Dump(data):
     return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
@@ -49,7 +49,7 @@ def ModuleJSON(moduleName, moduleDescription, group, asJSON=False):
     if asJSON: return Dump(output)
     else: return output
 
-def VariableJSON(variableName, variableDescription, variableType, variableMode="System", asJSON=False):
+def VariableJSON(variableName, variableDescription, variableType, value=None, variableMode="Dynamic", asJSON=False):
     if variableType not in acceptedTypes:
         raise err.Conflict("Unsupported variable type !")
         return None
@@ -59,6 +59,7 @@ def VariableJSON(variableName, variableDescription, variableType, variableMode="
     output={
             'VariableName': variableName,
             'VariableDescription': variableDescription,
+            'Value': value,
             'VariableType': variableType,
             'VariableMode': variableMode
            }

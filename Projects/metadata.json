@@ -1,8 +1,9 @@
 {
     "GlobalVariables": [
         {
+            "Value": "Tata Consultancy Services",
             "VariableDescription": "Company name",
-            "VariableMode": "System",
+            "VariableMode": "Static",
             "VariableName": "Header",
             "VariableType": "String"
         }

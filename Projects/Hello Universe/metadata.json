@@ -3,8 +3,9 @@
     "ProjectName": "Hello Universe",
     "ProjectVariables": [
         {
+            "Value": "000-000-000-000",
             "VariableDescription": "Tenant ID of Azure",
-            "VariableMode": "System",
+            "VariableMode": "Static",
             "VariableName": "TenantID",
             "VariableType": "String"
         }
@@ -19,6 +20,7 @@
                     "ModuleName": "Storage",
                     "ModuleVariables": [
                         {
+                            "Value": null,
                             "VariableDescription": "Size of the storage",
                             "VariableMode": "User",
                             "VariableName": "Storage Size",
@@ -31,8 +33,9 @@
             "TemplateName": "Azure",
             "TemplateVariables": [
                 {
+                    "Value": null,
                     "VariableDescription": "Resource group from Azure",
-                    "VariableMode": "System",
+                    "VariableMode": "Dynamic",
                     "VariableName": "Resource Group",
                     "VariableType": "List"
                 }

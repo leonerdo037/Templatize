@@ -86,8 +86,6 @@ class Module:
         templateData=js.GetJSON(jsonContent["Templates"], "TemplateName", templateName)[0]
         templateIndex=js.GetJSONIndex(jsonContent["Templates"], "TemplateName", templateName)
         index=js.GetJSONIndex(templateData["Modules"], "ModuleName", moduleName)
-        jsonContent["Templates"][int(templateIndex[0])]["Modules"][int(index[0])]["ModuleVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode))
+        jsonContent["Templates"][int(templateIndex[0])]["Modules"][int(index[0])]["ModuleVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode=variableMode))
         fl.Write(metaDataFile, js.Dump(jsonContent), True)
         return "Variable '{0}' created successfully !".format(variableName)
-
-    "({\()[^\)}]*\)}"
