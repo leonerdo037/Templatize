@@ -21,12 +21,12 @@ def ValidatePath(path, pathType, new=False):
 def ValidateProject(path, new=False):
     return ValidatePath(path, "Project", new)
 
-def ValidateTemplate(projectPath, templatePath, new=False):
+def ValidateSchema(projectPath, schemaPath, new=False):
     ValidateProject(projectPath, False)
-    return ValidatePath(templatePath, "Template", new)
+    return ValidatePath(schemaPath, "Schema", new)
 
-def ValidateModule(projectPath, templatePath, modulePath, new=False):
-    ValidateTemplate(projectPath, templatePath, False)
+def ValidateModule(projectPath, schemPath, modulePath, new=False):
+    ValidateSchema(projectPath, schemPath, False)
     return ValidatePath(modulePath, "Module", new)
 
 def Write(filePath, data, rewrite=False):

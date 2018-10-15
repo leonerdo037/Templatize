@@ -20,7 +20,7 @@ class Settings:
             raise err.Conflict("The path '{0}' not found !".format(envPath))
         os.makedirs(ProjectPath)
         metaFile=open(os.path.join(ProjectPath, ".metadata"),"w+")
-        metaFile.write(json.dumps({'ProjectName': projectName, 'ProjectDescription': projectDescription,'Templates':[]}, sort_keys=True, indent=4, separators=(',', ': ')))
+        metaFile.write(json.dumps({'ProjectName': projectName, 'ProjectDescription': projectDescription,'Schemas':[]}, sort_keys=True, indent=4, separators=(',', ': ')))
         metaFile.close()
         self.curProject=ProjectPath
         return "Project '{0}' created successfully !".format(projectName)

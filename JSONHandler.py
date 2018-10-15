@@ -23,16 +23,16 @@ def ProjectJSON(projectName, projectDescription, asJSON=False):
             'ProjectName': projectName,
             'ProjectDescription': projectDescription,
             'ProjectVariables': [],
-            'Templates': []
+            'Schemas': []
            }
     if asJSON: return Dump(output)
     else: return output
 
-def TemplateJSON(templateName, templateDescription, groupCount, asJSON=False):
+def SchemaJSON(schemaName, schemaDescription, groupCount, asJSON=False):
     output={
-            'TemplateName': templateName,
-            'TemplateDescription': templateDescription,
-            'TemplateVariables': [],
+            'SchemaName': schemaName,
+            'SchemaDescription': schemaDescription,
+            'SchemaVariables': [],
             'GroupCount': groupCount,
             'Modules': []
            }

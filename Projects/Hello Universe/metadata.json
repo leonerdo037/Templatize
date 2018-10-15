@@ -10,7 +10,7 @@
             "VariableType": "String"
         }
     ],
-    "Templates": [
+    "Schemas": [
         {
             "GroupCount": 3,
             "Modules": [
@@ -29,9 +29,9 @@
                     ]
                 }
             ],
-            "TemplateDescription": "Azure ARM template",
-            "TemplateName": "Azure",
-            "TemplateVariables": [
+            "SchemaDescription": "Azure ARM template",
+            "SchemaName": "Azure",
+            "SchemaVariables": [
                 {
                     "Value": null,
                     "VariableDescription": "Resource group from Azure",
