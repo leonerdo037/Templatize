@@ -29,19 +29,12 @@ def Dump(data):
 def Load(data):
     return json.loads(data, object_pairs_hook=OrderedDict)
 
-def GlobalJSON(asJSON=False):
-    output={
-            'GlobalVariables': []
-           }
-    if asJSON: return Dump(output)
-    else: return output
-
 def ProjectJSON(projectName, projectDescription, asJSON=False):
     output={
             'ProjectName': projectName,
             'ProjectDescription': projectDescription,
-            'ProjectVariables': [],
-            'Schemas': []
+            'Schemas': [],
+            'ProjectVariables': []
            }
     if asJSON: return Dump(output)
     else: return output
@@ -50,10 +43,10 @@ def SchemaJSON(schemaName, schemaDescription, groupCount, asJSON=False):
     output={
             'SchemaName': schemaName,
             'SchemaDescription': schemaDescription,
-            'SchemaVariables': [],
             'GroupCount': groupCount,
             'Modules': [],
-            'Templates': []
+            'Templates': [],
+            'SchemaVariables': []
            }
     if asJSON: return Dump(output)
     else: return output
@@ -61,9 +54,9 @@ def SchemaJSON(schemaName, schemaDescription, groupCount, asJSON=False):
 def ModuleJSON(moduleName, moduleDescription, group, asJSON=False):
     output={
             'ModuleName': moduleName,
-            'ModuleDescription': moduleDescription,
-            'ModuleVariables': [],
-            'Group': group
+            'ModuleDescription': moduleDescription,            
+            'Group': group,
+            'ModuleVariables': []
            }
     if asJSON: return Dump(output)
     else: return output
@@ -90,10 +83,10 @@ def VariableJSON(variableName, variableDescription, variableType, variableMode, 
             value=None
     output={
             'VariableName': variableName,
-            'VariableDescription': variableDescription,
-            'Value': value,
+            'VariableDescription': variableDescription,            
             'VariableType': variableType,
-            'VariableMode': variableMode
+            'VariableMode': variableMode,
+            'Value': value
            }
     if asJSON: return Dump(output)
     else: return output

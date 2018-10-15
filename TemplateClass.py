@@ -10,64 +10,57 @@ from ModuleClass import Module
 class Template:
 
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
-    projectName=None
-    schemaName=None
-    ProjectPath=None
-    metaDataFile=None
+    templateName=None
     schemaIndex=None
     moduleList=[]
-    project = Project()
-    schema = Schema()
-    module = Module()
+    schema = None
 
-    def __init__(self, projectName, schemaName):
-        self.projectName=projectName
-        self.schemaName=schemaName
-        self.ProjectPath=os.path.join(self.homeDIR, projectName)
-        self.metaDataFile=os.path.join(self.ProjectPath, "metadata.json")
-        self.moduleList=self.schema.GetModuleList(projectName, schemaName)
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
+    def __init__(self, projectName, schemaName, templateName):
+        self.templateName=templateName
+        self.schema=Schema(projectName, schemaName)
+        self.moduleList=self.schema.GetModuleList()
+        jsonContent=js.Load(fl.Read(self.schema.project.metaDataFile))
         self.schemaIndex=int(js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", schemaName)[0])
 
-    def CreateTemplate(self, templateName, templateDescription):
+    def CreateTemplate(self, templateDescription):
         # Validating Templates
         try:
-            if self.OpenTemplate(templateName) is not None:
-                raise err.Conflict("A Template with the name '{0}' already exists !".format(templateName))
+            if self.Open() is not None:
+                raise err.Conflict("A Template with the name '{0}' already exists !".format(self.templateName))
                 return None
         except err.Conflict as ex:
             if "Unable to find a Project" in str(ex): return None
             if "Unable to find a Schema" in str(ex): return None
             if "already exists" in str(ex):
-                raise err.Conflict("A Template with the name '{0}' already exists !".format(templateName))
+                raise err.Conflict("A Template with the name '{0}' already exists !".format(self.templateName))
                 return None
         # Creating Template
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
-        jsonContent["Schemas"][self.schemaIndex]["Templates"].append(js.TemplateJSON(templateName, templateDescription))
-        fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
-        return "Template '{0}' created successfully !".format(templateName)
+        jsonContent=js.Load(fl.Read(self.schema.project.metaDataFile))
+        jsonContent["Schemas"][self.schemaIndex]["Templates"].append(js.TemplateJSON(self.templateName, templateDescription))
+        fl.Write(self.schema.project.metaDataFile, js.Dump(jsonContent), True)
+        return "Template '{0}' created successfully !".format(self.templateName)
 
-    def OpenTemplate(self, templateName):
+    def Open(self):
         # Opening Template
-        templateData=self.schema.GetTemplateList(self.projectName, self.schemaName)
-        if js.GetJSON(templateData, "TemplateName", templateName)==None:
-            raise err.Conflict("Unable to find a Template with the name '{0}'".format(templateName))
+        templateData=self.schema.GetTemplateList()
+        if js.GetJSON(templateData, "TemplateName", self.templateName)==None:
+            raise err.Conflict("Unable to find a Template with the name '{0}'".format(self.templateName))
             return None
         return js.Load(js.Dump(templateData[0]))
 
-    def GetTemplateModules(self, templateName):
-        jsonContent=self.OpenTemplate(templateName)
+    def GetModules(self):
+        jsonContent=self.Open()
         return jsonContent["Modules"]
 
-    def AddModules(self, templateName, moduleKey, moduleName, ):
+    def AddModules(self, moduleKey, moduleName, ):
         # Validating Module Key
-        if js.GetJSON(self.GetTemplateModules(templateName), "ModuleKey", moduleKey):
+        if js.GetJSON(self.GetModules(), "ModuleKey", moduleKey):
             raise err.Conflict("A Module with the key '{0}' already exists !".format(moduleKey))
             return None
         # Adding Modules to Template
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
-        index=js.GetJSONIndex(jsonContent["Schemas"][self.schemaIndex]["Templates"], "TemplateName", templateName)
+        jsonContent=js.Load(fl.Read(self.schema.project.metaDataFile))
+        index=js.GetJSONIndex(jsonContent["Schemas"][self.schemaIndex]["Templates"], "TemplateName", self.templateName)
         jsonContent["Schemas"][self.schemaIndex]["Templates"][int(index[0])]["Modules"].append(js.TemplateModuleJSON(moduleKey, moduleName))
-        fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
+        fl.Write(self.schema.project.metaDataFile, js.Dump(jsonContent), True)
         return "Module '{0}' added successfully !".format(moduleName)
         

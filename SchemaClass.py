@@ -8,81 +8,79 @@ from ProjectClass import Project
 class Schema:
 
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
-    project = Project()
+    schemaName=None
+    schemaPath=None
+    project = None
 
-    def CreateSchema(self, projectName, schemaName, schemaDescription, groupCount):
-        # Checking Path
-        ProjectPath=os.path.join(self.homeDIR, projectName)
-        metaDataFile=os.path.join(ProjectPath, "metadata.json")
-        SchemaPath=os.path.join(ProjectPath, schemaName)
+    def __init__(self, projectName, schemaName):
+        self.schemaName=schemaName
+        self.project=Project(projectName)
+        self.schemaPath=os.path.join(self.project.projectPath, schemaName)
+
+    def CreateSchema(self, schemaDescription, groupCount):
         # Validating Path
         try:
-            if self.OpenSchema(projectName, schemaName) is not None: 
-                raise err.Conflict("A Schema with the name '{0}' already exists !".format(schemaName))
+            if self.Open() is not None: 
+                raise err.Conflict("A Schema with the name '{0}' already exists !".format(self.schemaName))
         except err.Conflict as ex:
             if "Unable to find a Project" in str(ex): return None
             if "already exists" in str(ex):
-                raise err.Conflict("A Schema with the name '{0}' already exists !".format(schemaName))
+                raise err.Conflict("A Schema with the name '{0}' already exists !".format(self.schemaName))
                 return None
         # Creating Directory & File
         try:
-            os.makedirs(SchemaPath)
-            jsonContent=js.Load(fl.Read(metaDataFile))
-            jsonContent["Schemas"].append(js.SchemaJSON(schemaName, schemaDescription, groupCount))
-            fl.Write(metaDataFile, js.Dump(jsonContent), True)
-            return "Schema '{0}' created successfully !".format(schemaName)
+            os.makedirs(self.schemaPath)
+            jsonContent=js.Load(fl.Read(self.project.metaDataFile))
+            jsonContent["Schemas"].append(js.SchemaJSON(self.schemaName, schemaDescription, groupCount))
+            fl.Write(self.project.metaDataFile, js.Dump(jsonContent), True)
+            return "Schema '{0}' created successfully !".format(self.schemaName)
         except WindowsError:
             raise err.Conflict("There are errors in the metadata file. Synchronize the data to fix them !")
         except OSError:
             raise err.Conflict("There are errors in the metadata file. Synchronize the data to fix them !")
-        if os.path.exists(SchemaPath):
-            os.removedirs(SchemaPath)
+        if os.path.exists(self.schemaPath):
+            os.removedirs(self.schemaPath)
         return None
 
-    def OpenSchema(self, projectName, schemaName):
-        ProjectPath=os.path.join(self.homeDIR, projectName)
-        metaDataFile=os.path.join(ProjectPath, "metadata.json")
-        SchemaPath=os.path.join(ProjectPath, schemaName)
+    def Open(self):
         # Opening Schema
-        schemas=self.project.GetSchemaList(projectName)
-        schemaData=js.GetJSON(schemas, "SchemaName", schemaName)
+        schemas=self.project.GetSchemaList()
+        schemaData=js.GetJSON(schemas, "SchemaName", self.schemaName)
         if schemaData==None:
-            raise err.Conflict("Unable to find a Schema with the name '{0}'".format(schemaName))
+            raise err.Conflict("Unable to find a Schema with the name '{0}'".format(self.schemaName))
             return None
         return js.Load(js.Dump(schemaData[0]))
 
-    def GetSchemaDescription(self, projectName, schemaName):
-        jsonContent=self.OpenSchema(projectName, schemaName)
+    def GetDescription(self):
+        jsonContent=self.Open()
         return jsonContent["SchemaDescription"]
 
-    def GetModuleList(self, projectName, schemaName):
-        jsonContent=self.OpenSchema(projectName, schemaName)
+    def GetModuleList(self):
+        jsonContent=self.Open()
         return jsonContent["Modules"]
 
-    def GetTemplateList(self, projectName, schemaName):
-        jsonContent=self.OpenSchema(projectName, schemaName)
+    def GetTemplateList(self):
+        jsonContent=self.Open()
         return jsonContent["Templates"]
 
-    def GetSchemaGroupCount(self, projectName, schemaName):
-        jsonContent=self.OpenSchema(projectName, schemaName)
+    def GetGroupCount(self):
+        jsonContent=self.Open()
         return jsonContent["GroupCount"]
 
-    def GetSchemaVariables(self, projectName, schemaName):
-        jsonContent=self.OpenSchema(projectName, schemaName)
+    def GetVariables(self):
+        jsonContent=self.Open()
         return jsonContent["SchemaVariables"]
 
-    def CreateSchemaVariable(self, projectName, schemaName, variableName, variableDescription, variableType, variableMode, value=None):
+    def CreateVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
         # Setting Value
         if variableMode != "Static":
             value = None
-        ProjectPath=os.path.join(self.homeDIR, projectName)
-        metaDataFile=os.path.join(ProjectPath, "metadata.json")
-        jsonContent=js.Load(fl.Read(metaDataFile))
-        for variable in self.GetSchemaVariables(projectName, schemaName):
+        jsonContent=js.Load(fl.Read(self.project.metaDataFile))
+        for variable in self.GetVariables():
             if variable["VariableName"]==variableName:
                 raise err.Conflict("A Schema Variable with the name '{0}' already exists !".format(variableName))
                 return None
-        index=js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", schemaName)
+        index=js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", self.schemaName)
         jsonContent["Schemas"][int(index[0])]["SchemaVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
-        fl.Write(metaDataFile, js.Dump(jsonContent), True)
+        fl.Write(self.project.metaDataFile, js.Dump(jsonContent), True)
         return "Variable '{0}' created successfully !".format(variableName)

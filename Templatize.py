@@ -6,19 +6,22 @@ from SchemaClass import Schema
 from ModuleClass import Module
 from TemplateClass import Template
 
-project = Project()
-schema = Schema()
-module = Module()
+#project = Project("Hello Universe")
 
+#print(project.CreateProject("Test Project"))
+#print(project.CreateVariable("TenantID", "Tenant ID of Azure", "String", "Static", "000-000-000"))
 
-print(project.CreateProject("Hello Universe","Test Project"))
-print(schema.CreateSchema("Hello Universe", "Azure", "Azure ARM template", 3))
-print(module.CreateModule("Hello Universe", "Azure", "Storage", "VM Template", 2, "Data"))
-print(project.CreateProjectVariable("Hello Universe" ,"TenantID", "Tenant ID of Azure", "String", "Static", "000-000-000"))
-print(schema.CreateSchemaVariable("Hello Universe", "Azure", "Resource Group", "Resource group from Azure", "List", "Internal", "Dummy"))
-print(module.CreateModuleVariable("Hello Universe", "Azure", "Storage", "Storage Size", "Size of the storage", "Number", "User"))
+#schema = Schema("Hello Universe", "Azure")
 
-template = Template("Hello Universe", "Azure")
+#print(schema.CreateSchema("Azure ARM template", 3))
+#print(schema.CreateVariable("Resource Group", "Resource group from Azure", "List", "Internal", "Dummy"))
 
-print(template.CreateTemplate("NewDeploy", "Test deployment"))
-print(template.AddModules("NewDeploy", "Disk2", "Storage"))
+#module = Module("Hello Universe", "Azure", "Storage")
+
+#print(module.CreateModule("VM Template", 2, "Data"))
+#print(module.CreateVariable("Storage Size", "Size of the storage", "Number", "User"))
+
+template = Template("Hello Universe", "Azure", "NewDeploy")
+
+#print(template.CreateTemplate("Test deployment"))
+print(template.AddModules("Disk2", "Storage"))
