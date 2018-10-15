@@ -74,7 +74,14 @@ class Module:
         jsonContent=self.OpenModule(projectName, schemaName, moduleName)
         return jsonContent["ModuleVariables"]
 
-    def CreateModuleVariable(self, projectName, schemaName, moduleName, variableName, variableDescription, variableType, variableMode):
+    def CreateModuleVariable(self, projectName, schemaName, moduleName, variableName, variableDescription, variableType, variableMode, value=None):
+        # Validating Variable Type
+        if variableMode == "Internal":
+            raise err.Conflict("A Variable with the mode '{0}' is not support by Modules !".format(variableMode))
+            return None
+        # Setting Value
+        if variableMode != "Static":
+            value = None
         ProjectPath=os.path.join(self.homeDIR, projectName)
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
         jsonContent=js.Load(fl.Read(metaDataFile))
@@ -85,6 +92,6 @@ class Module:
         schemaData=js.GetJSON(jsonContent["Schemas"], "SchemaName", schemaName)[0]
         schemaIndex=js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", schemaName)
         index=js.GetJSONIndex(schemaData["Modules"], "ModuleName", moduleName)
-        jsonContent["Schemas"][int(schemaIndex[0])]["Modules"][int(index[0])]["ModuleVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode=variableMode))
+        jsonContent["Schemas"][int(schemaIndex[0])]["Modules"][int(index[0])]["ModuleVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
         fl.Write(metaDataFile, js.Dump(jsonContent), True)
         return "Variable '{0}' created successfully !".format(variableName)

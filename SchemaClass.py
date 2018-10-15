@@ -59,6 +59,10 @@ class Schema:
         jsonContent=self.OpenSchema(projectName, schemaName)
         return jsonContent["Modules"]
 
+    def GetTemplateList(self, projectName, schemaName):
+        jsonContent=self.OpenSchema(projectName, schemaName)
+        return jsonContent["Templates"]
+
     def GetSchemaGroupCount(self, projectName, schemaName):
         jsonContent=self.OpenSchema(projectName, schemaName)
         return jsonContent["GroupCount"]
@@ -67,7 +71,10 @@ class Schema:
         jsonContent=self.OpenSchema(projectName, schemaName)
         return jsonContent["SchemaVariables"]
 
-    def CreateSchemaVariable(self, projectName, schemaName, variableName, variableDescription, variableType):
+    def CreateSchemaVariable(self, projectName, schemaName, variableName, variableDescription, variableType, variableMode, value=None):
+        # Setting Value
+        if variableMode != "Static":
+            value = None
         ProjectPath=os.path.join(self.homeDIR, projectName)
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
         jsonContent=js.Load(fl.Read(metaDataFile))
@@ -76,6 +83,6 @@ class Schema:
                 raise err.Conflict("A Schema Variable with the name '{0}' already exists !".format(variableName))
                 return None
         index=js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", schemaName)
-        jsonContent["Schemas"][int(index[0])]["SchemaVariables"].append(js.VariableJSON(variableName, variableDescription, variableType))
+        jsonContent["Schemas"][int(index[0])]["SchemaVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
         fl.Write(metaDataFile, js.Dump(jsonContent), True)
         return "Variable '{0}' created successfully !".format(variableName)

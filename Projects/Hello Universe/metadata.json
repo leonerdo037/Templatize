@@ -3,7 +3,7 @@
     "ProjectName": "Hello Universe",
     "ProjectVariables": [
         {
-            "Value": "000-000-000-000",
+            "Value": "000-000-000",
             "VariableDescription": "Tenant ID of Azure",
             "VariableMode": "Static",
             "VariableName": "TenantID",
@@ -33,11 +33,23 @@
             "SchemaName": "Azure",
             "SchemaVariables": [
                 {
-                    "Value": null,
+                    "Value": [],
                     "VariableDescription": "Resource group from Azure",
-                    "VariableMode": "Dynamic",
+                    "VariableMode": "Internal",
                     "VariableName": "Resource Group",
                     "VariableType": "List"
+                }
+            ],
+            "Templates": [
+                {
+                    "Modules": [
+                        {
+                            "ModuleKey": "Disk2",
+                            "ModuleName": "Storage"
+                        }
+                    ],
+                    "TemplateDescription": "Test deployment",
+                    "TemplateName": "NewDeploy"
                 }
             ]
         }

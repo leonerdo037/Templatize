@@ -51,7 +51,14 @@ class Project:
         jsonContent=self.OpenProject(projectName)
         return jsonContent["Schemas"]
 
-    def CreateProjectVariable(self, projectName, variableName, variableDescription, variableType, value):
+    def CreateProjectVariable(self, projectName, variableName, variableDescription, variableType, variableMode, value=None):
+        # Validating Variable Type
+        if variableMode != "Static" and variableMode != "Runtime":
+            raise err.Conflict("A Variable with the mode '{0}' is not support by Projects !".format(variableMode))
+            return None
+        # Setting Value
+        if variableMode != "Static":
+            value = None
         ProjectPath=os.path.join(self.homeDIR, projectName)
         metaDataFile=os.path.join(ProjectPath, "metadata.json")
         jsonContent=js.Load(fl.Read(metaDataFile))
@@ -59,6 +66,6 @@ class Project:
             if variable["VariableName"]==variableName:
                 raise err.Conflict("A Project Variable with the name '{0}' already exists !".format(variableName))
                 return None
-        jsonContent["ProjectVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, value, "Static"))
+        jsonContent["ProjectVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
         fl.Write(metaDataFile, js.Dump(jsonContent), True)
         return "Variable '{0}' created successfully !".format(variableName)
