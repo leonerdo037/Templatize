@@ -4,7 +4,7 @@ import Settings as props
 import FileHandler as fl
 import JSONHandler as js
 
-class Project:
+class Project(object):
 
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
     projectName=None
@@ -32,7 +32,7 @@ class Project:
     def GetProjectList(self):
         return os.listdir(self.homeDIR)
 
-    def Open(self):
+    def OpenProject(self):
         # Opening Project
         try:
             projectData=fl.Read(self.metaDataFile)
@@ -41,19 +41,19 @@ class Project:
             raise err.Conflict("Unable to find a Project with the name '{0}'".format(self.projectName))
         return None
 
-    def GetDescription(self):
-        jsonContent=self.Open()
+    def GetProjectDescription(self):
+        jsonContent=self.OpenProject()
         return jsonContent["ProjectDescription"]
 
-    def GetVariables(self):
-        jsonContent=self.Open()
+    def GetProjectVariables(self):
+        jsonContent=self.OpenProject()
         return jsonContent["ProjectVariables"]
 
     def GetSchemaList(self):
-        jsonContent=self.Open()
+        jsonContent=self.OpenProject()
         return jsonContent["Schemas"]
 
-    def CreateVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
+    def CreateProjectVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
         # Validating Variable Type
         if variableMode != "Static" and variableMode != "Runtime":
             raise err.Conflict("A Variable with the mode '{0}' is not support by Projects !".format(variableMode))

@@ -46,6 +46,10 @@
                         {
                             "ModuleKey": "Disk2",
                             "ModuleName": "Storage"
+                        },
+                        {
+                            "ModuleKey": "Disk1",
+                            "ModuleName": "Storage"
                         }
                     ],
                     "TemplateDescription": "Test deployment",

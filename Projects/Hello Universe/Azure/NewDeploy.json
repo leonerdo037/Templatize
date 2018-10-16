@@ -1,0 +1,38 @@
+[
+    [
+        {
+            "Value": "000-000-000",
+            "VariableDescription": "Tenant ID of Azure",
+            "VariableMode": "Static",
+            "VariableName": "TenantID",
+            "VariableType": "String"
+        }
+    ],
+    [
+        {
+            "Value": [],
+            "VariableDescription": "Resource group from Azure",
+            "VariableMode": "Internal",
+            "VariableName": "Resource Group",
+            "VariableType": "List"
+        }
+    ],
+    [
+        {
+            "Value": null,
+            "VariableDescription": "Size of the storage",
+            "VariableMode": "User",
+            "VariableName": "Storage Size",
+            "VariableType": "Number"
+        }
+    ],
+    [
+        {
+            "Value": null,
+            "VariableDescription": "Size of the storage",
+            "VariableMode": "User",
+            "VariableName": "Storage Size",
+            "VariableType": "Number"
+        }
+    ]
+]
