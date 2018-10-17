@@ -11,12 +11,24 @@ class Schema(Project):
     schemaName=None
     schemaPath=None
 
-    def __init__(self, projectName, schemaName):
+    #def __init__(self, projectName, schemaName):
+    #    self.schemaName=schemaName
+    #    super(Schema, self).__init__(projectName)
+    #    self.schemaPath=os.path.join(self.projectPath, schemaName)
+
+    def ValidateArgs(self):
+        if self.schemaName==None:
+            raise err.Conflict("Schema arguments are missing !")
+            return None
+
+    @classmethod
+    def InitSchema(self, projectName=None, schemaName=None):
         self.schemaName=schemaName
-        super(Schema, self).__init__(projectName)
+        super(Schema, self).InitProject(projectName)
         self.schemaPath=os.path.join(self.projectPath, schemaName)
 
     def CreateSchema(self, schemaDescription, groupCount):
+        self.ValidateArgs()
         try:
             if self.OpenSchema() is not None: 
                 raise err.Conflict("A Schema with the name '{0}' already exists !".format(self.schemaName))
@@ -41,6 +53,7 @@ class Schema(Project):
         return None
 
     def OpenSchema(self):
+        self.ValidateArgs()
         # Opening Schema
         schemas=self.GetSchemaList()
         schemaData=js.GetJSON(schemas, "SchemaName", self.schemaName)
@@ -70,6 +83,7 @@ class Schema(Project):
         return jsonContent["SchemaVariables"]
 
     def CreateSchemaVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
+        self.ValidateArgs()
         # Setting Value
         if variableMode != "Static":
             value = None

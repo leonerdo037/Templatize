@@ -13,14 +13,27 @@ class Template(Schema):
     schemaIndex=None
     moduleList=[]
 
-    def __init__(self, projectName, schemaName, templateName):
+    #def __init__(self, projectName, schemaName, templateName):
+    #    self.templateName=templateName
+    #    super(Template, self).__init__(projectName, schemaName)
+    #    self.moduleList=self.GetModuleList()
+    #    jsonContent=js.Load(fl.Read(self.metaDataFile))
+    #    self.schemaIndex=int(js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", schemaName)[0])
+    def ValidateArgs(self):
+        if self.moduleName==None:
+            raise err.Conflict("Template arguments are missing !")
+            return None
+
+    @classmethod
+    def InitTemplate(self, projectName=None, schemaName=None, templateName=None):
         self.templateName=templateName
-        super(Template, self).__init__(projectName, schemaName)
+        super(Template, self).InitSchema(projectName, schemaName)
         self.moduleList=self.GetModuleList()
         jsonContent=js.Load(fl.Read(self.metaDataFile))
         self.schemaIndex=int(js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", schemaName)[0])
 
     def CreateTemplate(self, templateDescription):
+        self.ValidateArgs()
         # Validating Templates
         try:
             if self.OpenTemplate() is not None:
@@ -39,6 +52,7 @@ class Template(Schema):
         return "Template '{0}' created successfully !".format(self.templateName)
 
     def OpenTemplate(self):
+        self.ValidateArgs()
         # Opening Template
         templateData=self.GetTemplateList()
         if js.GetJSON(templateData, "TemplateName", self.templateName)==None:
@@ -50,7 +64,8 @@ class Template(Schema):
         jsonContent=self.OpenTemplate()
         return jsonContent["Modules"]
 
-    def AddModules(self, moduleKey, moduleName, ):
+    def AddModules(self, moduleKey, moduleName):
+        self.ValidateArgs()
         # Validating Module Key
         if js.GetJSON(self.GetTemplateModules(), "ModuleKey", moduleKey):
             raise err.Conflict("A Module with the key '{0}' already exists !".format(moduleKey))
@@ -63,6 +78,7 @@ class Template(Schema):
         return "Module '{0}' added successfully !".format(moduleName)
 
     def GenerateVariables(self):
+        self.ValidateArgs()
         output=[]
         output.append(self.GetProjectVariables())
         output.append(self.GetSchemaVariables())

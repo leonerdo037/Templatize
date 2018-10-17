@@ -11,15 +11,24 @@ class Project(object):
     projectPath=None
     metaDataFile=None
 
-    def __init__(self, projectName):
+    #def __init__(self, projectName):
+    #    self.projectName=projectName
+    #    self.projectPath=os.path.join(self.homeDIR, projectName)
+    #    self.metaDataFile=os.path.join(self.projectPath, "metadata.json")
+
+    def ValidateArgs(self):
+        if self.projectName==None:
+            raise err.Conflict("Project arguments are missing !")
+            return None
+
+    @classmethod
+    def InitProject(self, projectName=None):
         self.projectName=projectName
         self.projectPath=os.path.join(self.homeDIR, projectName)
         self.metaDataFile=os.path.join(self.projectPath, "metadata.json")
-        # Creating Home Directory
-        if not os.path.exists(self.homeDIR):
-            os.makedirs(self.homeDIR)
 
     def CreateProject(self, projectDescription):
+        self.ValidateArgs()
         # Creating Directory & File
         try:
             os.makedirs(self.projectPath)
@@ -29,10 +38,9 @@ class Project(object):
             raise err.Conflict("A Project with the name '{0}' already exists !".format(self.projectName))
         return None
 
-    def GetProjectList(self):
-        return os.listdir(self.homeDIR)
 
     def OpenProject(self):
+        self.ValidateArgs()
         # Opening Project
         try:
             projectData=fl.Read(self.metaDataFile)
@@ -54,6 +62,7 @@ class Project(object):
         return jsonContent["Schemas"]
 
     def CreateProjectVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
+        self.ValidateArgs()
         # Validating Variable Type
         if variableMode != "Static" and variableMode != "Runtime":
             raise err.Conflict("A Variable with the mode '{0}' is not support by Projects !".format(variableMode))

@@ -6,23 +6,30 @@ from SchemaClass import Schema
 from ModuleClass import Module
 from TemplateClass import Template
 
-#project = Project("Hello Universe")
+class Templatize(Module, Template):
 
-#print(project.CreateProject("Test Project"))
-#print(project.CreateProjectVariable("TenantID", "Tenant ID of Azure", "String", "Static", "000-000-000"))
+    homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
 
-#schema = Schema("Hello Universe", "Azure")
+    def __init__(self):
+        # Creating Home Directory
+        if not os.path.exists(self.homeDIR):
+            os.makedirs(self.homeDIR)
 
-#print(schema.CreateSchema("Azure ARM template", 3))
-#print(schema.CreateSchemaVariable("Resource Group", "Resource group from Azure", "List", "Internal", "Dummy"))
+    def InitProject(self, projectName=None):
+        return super(Templatize, self).InitProject(projectName)
 
-#module = Module("Hello Universe", "Azure", "Storage")
+    def InitSchema(self, projectName=None, schemaName=None):
+        return super(Templatize, self).InitSchema(projectName, schemaName)
 
-#print(module.CreateModule("VM Template", 2, "Data"))
-#print(module.CreateModuleVariable("Storage Size", "Size of the storage", "Number", "User"))
+    def InitModule(self, projectName=None, schemaName=None, moduleName=None):
+        return super(Templatize, self).InitModule(projectName, schemaName, moduleName)
 
-template = Template("Hello Universe", "Azure", "NewDeploy")
+    def InitTemplate(self, projectName=None, schemaName=None, templateName=None):
+        return super(Templatize, self).InitTemplate(projectName, schemaName, templateName)
 
-#print(template.CreateTemplate("Test deployment"))
-#print(template.AddModules("Disk1", "Storage"))
-print(template.GenerateVariables())
+    def GetProjectList(self):
+        return os.listdir(self.homeDIR)
+
+temp=Templatize()
+print(temp.InitModule("Hello Universe", "Azure", "Storage"))
+print(temp.GetModuleVariables())

@@ -11,12 +11,23 @@ class Module(Schema):
     moduleName=None
     modulePath=None
 
-    def __init__(self, projectName, schemaName, moduleName):
+    #def __init__(self, projectName, schemaName, moduleName):
+    #    self.moduleName=moduleName
+    #    super(Module, self).__init__(projectName, schemaName)
+    #    self.modulePath=os.path.join(self.schemaPath, moduleName)
+    def ValidateArgs(self):
+        if self.moduleName==None:
+            raise err.Conflict("Module arguments are missing !")
+            return None
+
+    @classmethod
+    def InitModule(self, projectName=None, schemaName=None, moduleName=None):
         self.moduleName=moduleName
-        super(Module, self).__init__(projectName, schemaName)
+        super(Module, self).InitSchema(projectName, schemaName)
         self.modulePath=os.path.join(self.schemaPath, moduleName)
 
     def CreateModule(self, moduleDescription, group, data):
+        self.ValidateArgs()
         # Validating Path
         try:
             if self.OpenModule() is not None: 
@@ -49,6 +60,7 @@ class Module(Schema):
         return None
 
     def OpenModule(self):
+        self.ValidateArgs()
         # Opening Module
         modules=self.GetModuleList()
         moduleData=js.GetJSON(modules, "ModuleName", self.moduleName)
@@ -70,6 +82,7 @@ class Module(Schema):
         return jsonContent["ModuleVariables"]
 
     def CreateModuleVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
+        self.ValidateArgs()
         # Validating Variable Type
         if variableMode == "Internal":
             raise err.Conflict("A Variable with the mode '{0}' is not support by Modules !".format(variableMode))
