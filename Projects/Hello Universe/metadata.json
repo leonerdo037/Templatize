@@ -1,61 +1,21 @@
 {
     "ProjectDescription": "Test Project",
     "ProjectName": "Hello Universe",
-    "ProjectVariables": [
-        {
-            "Value": "000-000-000",
-            "VariableDescription": "Tenant ID of Azure",
-            "VariableMode": "Static",
-            "VariableName": "TenantID",
+    "ProjectVariables": {
+        "Two": {
+            "Value": null,
+            "VariableDescription": "Test Variable",
+            "VariableMode": "Runtime",
+            "VariableName": "Two",
+            "VariableType": "String"
+        },
+        "Two2": {
+            "Value": null,
+            "VariableDescription": "Test Variable",
+            "VariableMode": "Runtime",
+            "VariableName": "Two2",
             "VariableType": "String"
         }
-    ],
-    "Schemas": [
-        {
-            "GroupCount": 3,
-            "Modules": [
-                {
-                    "Group": 2,
-                    "ModuleDescription": "VM Template",
-                    "ModuleName": "Storage",
-                    "ModuleVariables": [
-                        {
-                            "Value": null,
-                            "VariableDescription": "Size of the storage",
-                            "VariableMode": "User",
-                            "VariableName": "Storage Size",
-                            "VariableType": "Number"
-                        }
-                    ]
-                }
-            ],
-            "SchemaDescription": "Azure ARM template",
-            "SchemaName": "Azure",
-            "SchemaVariables": [
-                {
-                    "Value": [],
-                    "VariableDescription": "Resource group from Azure",
-                    "VariableMode": "Internal",
-                    "VariableName": "Resource Group",
-                    "VariableType": "List"
-                }
-            ],
-            "Templates": [
-                {
-                    "Modules": [
-                        {
-                            "ModuleKey": "Disk2",
-                            "ModuleName": "Storage"
-                        },
-                        {
-                            "ModuleKey": "Disk1",
-                            "ModuleName": "Storage"
-                        }
-                    ],
-                    "TemplateDescription": "Test deployment",
-                    "TemplateName": "NewDeploy"
-                }
-            ]
-        }
-    ]
+    },
+    "Schemas": []
 }

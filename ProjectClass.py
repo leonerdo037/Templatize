@@ -38,7 +38,6 @@ class Project(object):
             raise err.Conflict("A Project with the name '{0}' already exists !".format(self.projectName))
         return None
 
-
     def OpenProject(self):
         self.ValidateArgs()
         # Opening Project
@@ -70,11 +69,13 @@ class Project(object):
         # Setting Value
         if variableMode != "Static":
             value = None
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
-        for variable in jsonContent["ProjectVariables"]:
-            if variable["VariableName"]==variableName:
-                raise err.Conflict("A Project Variable with the name '{0}' already exists !".format(variableName))
-                return None
-        jsonContent["ProjectVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
-        fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
-        return "Variable '{0}' created successfully !".format(variableName)
+        jsonContent=self.OpenProject()
+        # Validating Uniquness
+        if variableName in jsonContent["ProjectVariables"]:
+            raise err.Conflict("A Project Variable with the name '{0}' already exists !".format(variableName))
+            return None
+        else:
+            jsonContent["ProjectVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
+            fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
+            return "Variable '{0}' created successfully !".format(variableName)         
+                

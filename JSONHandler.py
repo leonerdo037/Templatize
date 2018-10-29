@@ -34,7 +34,7 @@ def ProjectJSON(projectName, projectDescription, asJSON=False):
             'ProjectName': projectName,
             'ProjectDescription': projectDescription,
             'Schemas': [],
-            'ProjectVariables': []
+            'ProjectVariables': {}
            }
     if asJSON: return Dump(output)
     else: return output
@@ -46,7 +46,7 @@ def SchemaJSON(schemaName, schemaDescription, groupCount, asJSON=False):
             'GroupCount': groupCount,
             'Modules': [],
             'Templates': [],
-            'SchemaVariables': []
+            'SchemaVariables': {}
            }
     if asJSON: return Dump(output)
     else: return output

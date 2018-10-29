@@ -31,5 +31,9 @@ class Templatize(Module, Template):
         return os.listdir(self.homeDIR)
 
 temp=Templatize()
-print(temp.InitModule("Hello Universe", "Azure", "Storage"))
-print(temp.GetModuleVariables())
+proj=Project()
+proj.InitProject("Hello Universe")
+#proj.CreateProject("Test Project")
+proj.CreateProjectVariable("Two", "Test Variable", "String", "Runtime", "Dummy")
+#print(temp.InitModule("Hello Universe", "Azure", "Storage"))
+#print(temp.GetModuleVariables())
