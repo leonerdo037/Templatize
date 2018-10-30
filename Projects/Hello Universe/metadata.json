@@ -1,21 +1,8 @@
 {
     "ProjectDescription": "Test Project",
     "ProjectName": "Hello Universe",
-    "ProjectVariables": {
-        "Two": {
-            "Value": null,
-            "VariableDescription": "Test Variable",
-            "VariableMode": "Runtime",
-            "VariableName": "Two",
-            "VariableType": "String"
-        },
-        "Two2": {
-            "Value": null,
-            "VariableDescription": "Test Variable",
-            "VariableMode": "Runtime",
-            "VariableName": "Two2",
-            "VariableType": "String"
-        }
-    },
-    "Schemas": []
+    "ProjectVariables": {},
+    "Schemas": [
+        "Azure"
+    ]
 }

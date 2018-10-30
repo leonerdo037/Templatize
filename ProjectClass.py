@@ -9,14 +9,14 @@ class Project(object):
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
     projectName=None
     projectPath=None
-    metaDataFile=None
+    projectMetaData=None
 
     #def __init__(self, projectName):
     #    self.projectName=projectName
     #    self.projectPath=os.path.join(self.homeDIR, projectName)
-    #    self.metaDataFile=os.path.join(self.projectPath, "metadata.json")
+    #    self.projectMetaData=os.path.join(self.projectPath, "metadata.json")
 
-    def ValidateArgs(self):
+    def __ValidateArgs(self):
         if self.projectName==None:
             raise err.Conflict("Project arguments are missing !")
             return None
@@ -25,24 +25,24 @@ class Project(object):
     def InitProject(self, projectName=None):
         self.projectName=projectName
         self.projectPath=os.path.join(self.homeDIR, projectName)
-        self.metaDataFile=os.path.join(self.projectPath, "metadata.json")
+        self.projectMetaData=os.path.join(self.projectPath, "metadata.json")
 
     def CreateProject(self, projectDescription):
-        self.ValidateArgs()
+        self.__ValidateArgs()
         # Creating Directory & File
         try:
             os.makedirs(self.projectPath)
-            fl.Write(self.metaDataFile, js.ProjectJSON(self.projectName, projectDescription, asJSON=True))
+            fl.Write(self.projectMetaData, js.ProjectJSON(self.projectName, projectDescription, asJSON=True))
             return "Project '{0}' created successfully !".format(self.projectName)
         except WindowsError or OSError:
             raise err.Conflict("A Project with the name '{0}' already exists !".format(self.projectName))
         return None
 
     def OpenProject(self):
-        self.ValidateArgs()
+        self.__ValidateArgs()
         # Opening Project
         try:
-            projectData=fl.Read(self.metaDataFile)
+            projectData=fl.Read(self.projectMetaData)
             return js.Load(projectData)
         except IOError:
             raise err.Conflict("Unable to find a Project with the name '{0}'".format(self.projectName))
@@ -76,6 +76,6 @@ class Project(object):
             return None
         else:
             jsonContent["ProjectVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
-            fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
+            fl.Write(self.projectMetaData, js.Dump(jsonContent), True)
             return "Variable '{0}' created successfully !".format(variableName)         
                 

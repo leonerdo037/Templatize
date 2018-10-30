@@ -9,6 +9,10 @@ from TemplateClass import Template
 class Templatize(Module, Template):
 
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
+    project=None
+    schema=None
+    module=None
+    template=None
 
     def __init__(self):
         # Creating Home Directory
@@ -31,9 +35,14 @@ class Templatize(Module, Template):
         return os.listdir(self.homeDIR)
 
 temp=Templatize()
-proj=Project()
-proj.InitProject("Hello Universe")
+temp.InitProject("Hello Universe")
+temp.InitSchema("Hello Universe", "Azure")
+#temp.CreateSchema("Test Schema", 3)
+temp.InitModule("Hello Universe", "Azure", "DiskTest")
+#temp.CreateModule("Test Module", 3, "Data")
+temp.CreateModuleVariable("Disk2","Test Variable", "Number", "Runtime")
+#temp.CreateSchemaVariable("Disk2","Test Variable", "Number", "Internal")
+#temp.CreateProject("Test Project")
 #proj.CreateProject("Test Project")
-proj.CreateProjectVariable("Two", "Test Variable", "String", "Runtime", "Dummy")
 #print(temp.InitModule("Hello Universe", "Azure", "Storage"))
 #print(temp.GetModuleVariables())

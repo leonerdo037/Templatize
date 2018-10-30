@@ -15,7 +15,7 @@ class Module(Schema):
     #    self.moduleName=moduleName
     #    super(Module, self).__init__(projectName, schemaName)
     #    self.modulePath=os.path.join(self.schemaPath, moduleName)
-    def ValidateArgs(self):
+    def __ValidateArgs(self):
         if self.moduleName==None:
             raise err.Conflict("Module arguments are missing !")
             return None
@@ -27,10 +27,10 @@ class Module(Schema):
         self.modulePath=os.path.join(self.schemaPath, moduleName)
 
     def CreateModule(self, moduleDescription, group, data):
-        self.ValidateArgs()
+        self.__ValidateArgs()
         # Validating Path
         try:
-            if self.OpenModule() is not None: 
+            if self.OpenModule() is not None:
                 raise err.Conflict("A Module with the name '{0}' already exists !".format(self.moduleName))
         except err.Conflict as ex:
             if "Unable to find a Project" in str(ex): return None
@@ -45,10 +45,9 @@ class Module(Schema):
                 return None
         # Creating Directory & File
         try:
-            jsonContent=js.Load(fl.Read(self.metaDataFile))
-            index=js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", self.schemaName)
-            jsonContent["Schemas"][int(index[0])]["Modules"].append(js.ModuleJSON(self.moduleName, moduleDescription, group))
-            fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
+            jsonContent=js.Load(fl.Read(self.schemaMetaData))
+            jsonContent["Modules"][self.moduleName]=js.ModuleJSON(self.moduleName, moduleDescription, group)
+            fl.Write(self.schemaMetaData, js.Dump(jsonContent), True)
             fl.Write(self.modulePath, data, True)
             return "Module '{0}' created successfully !".format(self.moduleName)
         except WindowsError:
@@ -60,14 +59,14 @@ class Module(Schema):
         return None
 
     def OpenModule(self):
-        self.ValidateArgs()
+        self.__ValidateArgs()
         # Opening Module
         modules=self.GetModuleList()
-        moduleData=js.GetJSON(modules, "ModuleName", self.moduleName)
-        if moduleData==None:
+        if self.moduleName in modules:
+            return js.Load(fl.Read(self.schemaMetaData))["Modules"][self.moduleName]
+        else:
             raise err.Conflict("Unable to find a Module with the name '{0}'".format(self.moduleName))
             return None
-        return js.Load(js.Dump(moduleData[0]))
 
     def GetModuleDescription(self):
         jsonContent=self.OpenModule()
@@ -82,7 +81,7 @@ class Module(Schema):
         return jsonContent["ModuleVariables"]
 
     def CreateModuleVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
-        self.ValidateArgs()
+        self.__ValidateArgs()
         # Validating Variable Type
         if variableMode == "Internal":
             raise err.Conflict("A Variable with the mode '{0}' is not support by Modules !".format(variableMode))
@@ -90,14 +89,13 @@ class Module(Schema):
         # Setting Value
         if variableMode != "Static":
             value = None
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
-        for variable in self.GetModuleVariables():
-            if variable["VariableName"]==variableName:
-                raise err.Conflict("A Module Variable with the name '{0}' already exists !".format(variableName))
-                return None
-        schemaData=js.GetJSON(jsonContent["Schemas"], "SchemaName", self.schemaName)[0]
-        schemaIndex=js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", self.schemaName)
-        index=js.GetJSONIndex(schemaData["Modules"], "ModuleName", self.moduleName)
-        jsonContent["Schemas"][int(schemaIndex[0])]["Modules"][int(index[0])]["ModuleVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
-        fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
-        return "Variable '{0}' created successfully !".format(variableName)
+        jsonContent=self.OpenModule()
+        # Validating Uniquness
+        if variableName in jsonContent["ModuleVariables"]:
+            raise err.Conflict("A Module Variable with the name '{0}' already exists !".format(variableName))
+            return None
+        else:
+            jsonContent=self.OpenSchema()
+            jsonContent["Modules"][self.moduleName]["ModuleVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
+            fl.Write(self.schemaMetaData, js.Dump(jsonContent), True)
+            return "Variable '{0}' created successfully !".format(variableName)

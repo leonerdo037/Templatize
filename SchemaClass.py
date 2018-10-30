@@ -8,6 +8,7 @@ from ProjectClass import Project
 class Schema(Project):
 
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
+    schemaMetaData=None
     schemaName=None
     schemaPath=None
 
@@ -16,7 +17,7 @@ class Schema(Project):
     #    super(Schema, self).__init__(projectName)
     #    self.schemaPath=os.path.join(self.projectPath, schemaName)
 
-    def ValidateArgs(self):
+    def __ValidateArgs(self):
         if self.schemaName==None:
             raise err.Conflict("Schema arguments are missing !")
             return None
@@ -26,9 +27,10 @@ class Schema(Project):
         self.schemaName=schemaName
         super(Schema, self).InitProject(projectName)
         self.schemaPath=os.path.join(self.projectPath, schemaName)
+        self.schemaMetaData=os.path.join(self.schemaPath, "metadata.json")
 
     def CreateSchema(self, schemaDescription, groupCount):
-        self.ValidateArgs()
+        self.__ValidateArgs()
         try:
             if self.OpenSchema() is not None: 
                 raise err.Conflict("A Schema with the name '{0}' already exists !".format(self.schemaName))
@@ -40,9 +42,12 @@ class Schema(Project):
         # Creating Directory & File
         try:
             os.makedirs(self.schemaPath)
-            jsonContent=js.Load(fl.Read(self.metaDataFile))
-            jsonContent["Schemas"].append(js.SchemaJSON(self.schemaName, schemaDescription, groupCount))
-            fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
+            jsonContent=js.Load(fl.Read(self.projectMetaData))
+            jsonContent["Schemas"].append(self.schemaName)
+            fl.Write(self.projectMetaData, js.Dump(jsonContent), True)
+            # Creating Schema Metadata
+            jsonContent=js.SchemaJSON(self.schemaName, schemaDescription, groupCount)
+            fl.Write(self.schemaMetaData, js.Dump(jsonContent), True)
             return "Schema '{0}' created successfully !".format(self.schemaName)
         except WindowsError:
             raise err.Conflict("There are errors in the metadata file. Synchronize the data to fix them !")
@@ -53,14 +58,14 @@ class Schema(Project):
         return None
 
     def OpenSchema(self):
-        self.ValidateArgs()
-        # Opening Schema
+        self.__ValidateArgs()
         schemas=self.GetSchemaList()
-        schemaData=js.GetJSON(schemas, "SchemaName", self.schemaName)
-        if schemaData==None:
+        # Opening Schema
+        if self.schemaName in schemas:
+            return js.Load(fl.Read(self.schemaMetaData))
+        else:
             raise err.Conflict("Unable to find a Schema with the name '{0}'".format(self.schemaName))
-            return None
-        return js.Load(js.Dump(schemaData[0]))
+            return None            
 
     def GetSchemaDescription(self):
         jsonContent=self.OpenSchema()
@@ -83,16 +88,16 @@ class Schema(Project):
         return jsonContent["SchemaVariables"]
 
     def CreateSchemaVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
-        self.ValidateArgs()
+        self.__ValidateArgs()
         # Setting Value
         if variableMode != "Static":
             value = None
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
-        for variable in self.GetSchemaVariables():
-            if variable["VariableName"]==variableName:
-                raise err.Conflict("A Schema Variable with the name '{0}' already exists !".format(variableName))
-                return None
-        index=js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", self.schemaName)
-        jsonContent["Schemas"][int(index[0])]["SchemaVariables"].append(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
-        fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
-        return "Variable '{0}' created successfully !".format(variableName)
+        jsonContent=self.OpenSchema()
+        # Validating Uniquness
+        if variableName in jsonContent["SchemaVariables"]:
+            raise err.Conflict("A Schema Variable with the name '{0}' already exists !".format(variableName))
+            return None
+        else:
+            jsonContent["SchemaVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
+            fl.Write(self.schemaMetaData, js.Dump(jsonContent), True)
+            return "Variable '{0}' created successfully !".format(variableName)
