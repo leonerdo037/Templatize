@@ -61,7 +61,7 @@ class Project(object):
         return jsonContent["Schemas"]
 
     def CreateProjectVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
-        self.ValidateArgs()
+        self.__ValidateArgs()
         # Validating Variable Type
         if variableMode != "Static" and variableMode != "Runtime":
             raise err.Conflict("A Variable with the mode '{0}' is not support by Projects !".format(variableMode))
