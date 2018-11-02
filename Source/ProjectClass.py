@@ -7,61 +7,45 @@ import JSONHandler as js
 class Project(object):
 
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
-    projectName=None
-    projectPath=None
-    projectMetaData=None
+    Name=None
+    Path=None
+    MetaData=None
+    
+    def Exists(self):
+        if os.path.exists(self.Path):
+            return True
+        else:
+            return False
 
-    #def __init__(self, projectName):
-    #    self.projectName=projectName
-    #    self.projectPath=os.path.join(self.homeDIR, projectName)
-    #    self.projectMetaData=os.path.join(self.projectPath, "metadata.json")
+    def Init(self, Name):
+        self.Name=Name
+        self.Path=os.path.join(self.homeDIR, Name)
+        self.MetaData=os.path.join(self.Path, "metadata.json")
 
-    def __ValidateArgs(self):
-        if self.projectName==None:
-            raise err.Conflict("Project arguments are missing !")
-            return None
-
-    @classmethod
-    def InitProject(self, projectName=None):
-        self.projectName=projectName
-        self.projectPath=os.path.join(self.homeDIR, projectName)
-        self.projectMetaData=os.path.join(self.projectPath, "metadata.json")
-
-    def CreateProject(self, projectDescription):
-        self.__ValidateArgs()
+    def __Create(self, projectDescription):
         # Creating Directory & File
-        try:
-            os.makedirs(self.projectPath)
-            fl.Write(self.projectMetaData, js.ProjectJSON(self.projectName, projectDescription, asJSON=True))
-            return "Project '{0}' created successfully !".format(self.projectName)
-        except WindowsError or OSError:
-            raise err.Conflict("A Project with the name '{0}' already exists !".format(self.projectName))
-        return None
+        os.makedirs(self.Path)
+        fl.Write(self.MetaData, js.ProjectJSON(self.Name, projectDescription, asJSON=True))
+        return "Project '{0}' created successfully !".format(self.Name)
 
-    def OpenProject(self):
-        self.__ValidateArgs()
+    def Open(self):
         # Opening Project
-        try:
-            projectData=fl.Read(self.projectMetaData)
-            return js.Load(projectData)
-        except IOError:
-            raise err.Conflict("Unable to find a Project with the name '{0}'".format(self.projectName))
-        return None
+        projectData=fl.Read(self.MetaData)
+        return js.Load(projectData)
 
-    def GetProjectDescription(self):
-        jsonContent=self.OpenProject()
+    def GetDescription(self):
+        jsonContent=self.Open()
         return jsonContent["ProjectDescription"]
 
-    def GetProjectVariables(self):
-        jsonContent=self.OpenProject()
+    def GetVariables(self):
+        jsonContent=self.Open()
         return jsonContent["ProjectVariables"]
 
     def GetSchemaList(self):
-        jsonContent=self.OpenProject()
+        jsonContent=self.Open()
         return jsonContent["Schemas"]
 
-    def CreateProjectVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
-        self.__ValidateArgs()
+    def CreateVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
         # Validating Variable Type
         if variableMode != "Static" and variableMode != "Runtime":
             raise err.Conflict("A Variable with the mode '{0}' is not support by Projects !".format(variableMode))
@@ -69,13 +53,13 @@ class Project(object):
         # Setting Value
         if variableMode != "Static":
             value = None
-        jsonContent=self.OpenProject()
+        jsonContent=self.Open()
         # Validating Uniquness
         if variableName in jsonContent["ProjectVariables"]:
             raise err.Conflict("A Project Variable with the name '{0}' already exists !".format(variableName))
             return None
         else:
             jsonContent["ProjectVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
-            fl.Write(self.projectMetaData, js.Dump(jsonContent), True)
+            fl.Write(self.MetaData, js.Dump(jsonContent), True)
             return "Variable '{0}' created successfully !".format(variableName)         
                 
