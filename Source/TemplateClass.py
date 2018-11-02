@@ -9,15 +9,14 @@ from ModuleClass import Module
 class Template(Schema):
 
     homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
+    templateMetaData=None
     templateName=None
-    schemaIndex=None
-    moduleList=[]
 
     #def __init__(self, projectName, schemaName, templateName):
     #    self.templateName=templateName
     #    super(Template, self).__init__(projectName, schemaName)
     #    self.moduleList=self.GetModuleList()
-    #    jsonContent=js.Load(fl.Read(self.metaDataFile))
+    #    jsonContent=js.Load(fl.Read(self.projectMetaData))
     #    self.schemaIndex=int(js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", schemaName)[0])
     def ValidateArgs(self):
         if self.moduleName==None:
@@ -28,9 +27,7 @@ class Template(Schema):
     def InitTemplate(self, projectName=None, schemaName=None, templateName=None):
         self.templateName=templateName
         super(Template, self).InitSchema(projectName, schemaName)
-        self.moduleList=self.GetModuleList()
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
-        self.schemaIndex=int(js.GetJSONIndex(jsonContent["Schemas"], "SchemaName", schemaName)[0])
+        self.templateMetaData=os.path.join(self.schemaPath, self.templateName + ".json")
 
     def CreateTemplate(self, templateDescription):
         self.ValidateArgs()
@@ -46,19 +43,29 @@ class Template(Schema):
                 raise err.Conflict("A Template with the name '{0}' already exists !".format(self.templateName))
                 return None
         # Creating Template
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
-        jsonContent["Schemas"][self.schemaIndex]["Templates"].append(js.TemplateJSON(self.templateName, templateDescription))
-        fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
-        return "Template '{0}' created successfully !".format(self.templateName)
+        try:
+            jsonContent=js.Load(fl.Read(self.schemaMetaData))
+            jsonContent["Templates"].append(self.templateName)
+            fl.Write(self.schemaMetaData, js.Dump(jsonContent), True)
+            fl.Write(self.templateMetaData, "", True)
+            return "Template '{0}' created successfully !".format(self.templateName)
+        except WindowsError:
+            raise err.Conflict("There are errors in the metadata file. Synchronize the data to fix them !")
+        except OSError:
+            raise err.Conflict("There are errors in the metadata file. Synchronize the data to fix them !")
+        if os.path.exists(self.templateMetaData):
+            os.remove(self.templateMetaData)
+        return None
 
     def OpenTemplate(self):
         self.ValidateArgs()
         # Opening Template
-        templateData=self.GetTemplateList()
-        if js.GetJSON(templateData, "TemplateName", self.templateName)==None:
+        templates=self.GetTemplateList()
+        if self.templateName in templates:
+            return fl.Read(self.templateMetaData)
+        else:
             raise err.Conflict("Unable to find a Template with the name '{0}'".format(self.templateName))
             return None
-        return js.Load(js.Dump(templateData[0]))
 
     def GetTemplateModules(self):
         jsonContent=self.OpenTemplate()
@@ -71,10 +78,10 @@ class Template(Schema):
             raise err.Conflict("A Module with the key '{0}' already exists !".format(moduleKey))
             return None
         # Adding Modules to Template
-        jsonContent=js.Load(fl.Read(self.metaDataFile))
+        jsonContent=js.Load(fl.Read(self.projectMetaData))
         index=js.GetJSONIndex(jsonContent["Schemas"][self.schemaIndex]["Templates"], "TemplateName", self.templateName)
         jsonContent["Schemas"][self.schemaIndex]["Templates"][int(index[0])]["Modules"].append(js.TemplateModuleJSON(moduleKey, moduleName))
-        fl.Write(self.metaDataFile, js.Dump(jsonContent), True)
+        fl.Write(self.projectMetaData, js.Dump(jsonContent), True)
         return "Module '{0}' added successfully !".format(moduleName)
 
     def GenerateVariables(self):

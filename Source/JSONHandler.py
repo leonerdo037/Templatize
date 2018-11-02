@@ -34,7 +34,7 @@ def ProjectJSON(projectName, projectDescription, asJSON=False):
             'ProjectName': projectName,
             'ProjectDescription': projectDescription,
             'Schemas': [],
-            'ProjectVariables': []
+            'ProjectVariables': {}
            }
     if asJSON: return Dump(output)
     else: return output
@@ -44,9 +44,9 @@ def SchemaJSON(schemaName, schemaDescription, groupCount, asJSON=False):
             'SchemaName': schemaName,
             'SchemaDescription': schemaDescription,
             'GroupCount': groupCount,
-            'Modules': [],
+            'Modules': {},
             'Templates': [],
-            'SchemaVariables': []
+            'SchemaVariables': {}
            }
     if asJSON: return Dump(output)
     else: return output
@@ -56,7 +56,7 @@ def ModuleJSON(moduleName, moduleDescription, group, asJSON=False):
             'ModuleName': moduleName,
             'ModuleDescription': moduleDescription,            
             'Group': group,
-            'ModuleVariables': []
+            'ModuleVariables': {}
            }
     if asJSON: return Dump(output)
     else: return output
@@ -96,14 +96,6 @@ def TemplateJSON(templateName, templateDescription, asJSON=False):
             'TemplateName': templateName,
             'TemplateDescription': templateDescription,
             'Modules': []
-           }
-    if asJSON: return Dump(output)
-    else: return output
-
-def TemplateModuleJSON(ModuleKey, moduleName, asJSON=False):
-    output={
-            'ModuleKey': ModuleKey,
-            'ModuleName': moduleName
            }
     if asJSON: return Dump(output)
     else: return output
