@@ -15,107 +15,131 @@ class Templatize(object):
     __template=Template()
 
     # Properties
-
     @property
     def project(self):
         if self.__project is None:
-            raise err.Conflict("Stage or Create the Project before use !")
+            raise err.Conflict("Stage the Project before use !")
             return None
         return self.__project
 
     @property
     def schema(self):
-        self.project.Open()
+        self.project.Path
         if self.__schema is None:
-                raise err.Conflict("Stage or Create the Schema before use !")
+                raise err.Conflict("Stage the Schema before use !")
                 return None
         return self.__schema
 
     @property
     def module(self):
-        self.schema.Open()
+        self.schema.Path
         if self.__module is None:
-            raise err.Conflict("Stage or Create the Project before use !")
+            raise err.Conflict("Stage the Module before use !")
             return None
         return self.__module
 
     @property
     def template(self):
-        self.schema.Open()
+        self.schema.Path
         if self.__template is None:
-            raise err.Conflict("Stage or Create the Project before use !")
+            raise err.Conflict("Stage the Template before use !")
             return None
         return self.__template
 
     def __init__(self):
         # Initializaing Class Variables to None
         self.__project=None
-        scema=None
-        module=None
-        template=None
+        self.__scema=None
+        self.__module=None
+        self.__template=None
         # Creating Home Directory
         if not os.path.exists(self.homeDIR):
             os.makedirs(self.homeDIR)
 
-    def StageProject(self, Name):
-        self.__project=Project()
-        self.project.Init(Name)
-        # Checking Project's Existence
-        if not self.project.Exists():
-            self.__project=None
-
-    def CreateProject(self, Name, description):
-        self.__project=Project()
-        self.project.Init(Name)
-        if self.project.Exists():
-            self.__project=None
-            raise err.Conflict("A Project with the name '{0}' already exists !".format(Name))
-            return None
-        else:
-            return self.project.__Create(description)
-
-    def StageSchema(self, schemaName):
-        self.__project=Project()
-        self.project.Init(Name)
-        # Checking Schema's Existence
-        if not self.project.Exists():
-            self.__project=None
-
-    def StageModule(self, moduleName):
-        return super(Templatize, self).InitModule(self.project.projectName, self.schema.schemaName, moduleName)
-
-    def StageTemplate(self, templateName):
-        return super(Templatize, self).InitTemplate(self.project.projectName, self.schema.schemaName, templateName)
-
     def GetProjectList(self):
         return os.listdir(self.homeDIR)
 
-# Creating Home Directory
-#import shutil
-#try:
-#    shutil.rmtree(os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects"))
-#except:
-#    pass
+    def StageProject(self, name):
+        self.__project=Project()
+        self.project.Init(name)
+        # Checking Project's Existence
+        if not self.project.Exists():
+            self.__project=None
+            raise err.Conflict("Project not found !")
+
+    def StageSchema(self, name):
+        self.__schema=Schema()
+        self.schema.Init(name, self.project.Path)
+        # Checking Schema's Existence
+        if not self.schema.Exists() or name not in self.project.GetSchemaList():
+            self.__schema=None
+            raise err.Conflict("Schema not found !")
+
+    def StageModule(self, name):
+        self.__module=Module()
+        self.module.Init(name, self.schema.Path)
+        # Checking Module's Existence
+        if not self.module.Exists() or name not in self.schema.GetModuleList():
+            self.__module=None
+            raise err.Conflict("Module not found !")
+
+    def StageTemplate(self, name):
+        self.__template=Template()
+        self.template.Init(name, self.schema.Path)
+        # Checking Module's Existence
+        if not self.template.Exists() or name not in self.schema.GetTemplateList():
+            self.__template=None
+            raise err.Conflict("Template not found !")
+
+    def CreateProject(self, name, description):
+        self.__project=Project()
+        self.project.Init(name)
+        if self.project.Exists():
+            self.__project=None
+            raise err.Conflict("A Project with the name '{0}' already exists !".format(name))
+        else:
+            return self.project._Create(description)
+
+    def CreateSchema(self, name, description, groupCount):
+        self.__schema=Schema()
+        self.schema.Init(name, self.project.Path)
+        if self.schema.Exists():
+            self.__schema=None
+            raise err.Conflict("A Schema with the name '{0}' already exists !".format(name))
+        else:
+            return self.schema._Create(description, groupCount)
+
+    def CreateModule(self, name, description, group, data):
+        self.__module=Module()
+        self.module.Init(name, self.schema.Path)
+        if self.module.Exists():
+            self.__module=None
+            raise err.Conflict("A Module with the name '{0}' already exists !".format(name))
+        else:
+            return self.module._Create(description, group, self.schema.GetGroupCount(), data)
+
+    def CreateTemplate(self, name, description):
+        self.__template=Template()
+        self.template.Init(name, self.schema.Path)
+        if self.template.Exists():
+            self.__template=None
+            raise err.Conflict("A Template with the name '{0}' already exists !".format(name))
+        else:
+            return self.template._Create(description)
+
+import shutil
+try:
+    shutil.rmtree(os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects"))
+except:
+    pass
 
 temp=Templatize()
-#temp.CreateProject("Hello Universe", "Default Project")
+temp.CreateProject("Hello Universe", "Default Project")
+temp.CreateSchema("Azure-BPD", "Azure Templates for Blueprint Designer", 6)
+temp.CreateModule("Data Disk", "Azure Managed Disk", 5, "<Data HERE>")
+temp.CreateTemplate("NewTemplate", "Test Template based on Azure")
+
 temp.StageProject("Hello Universe")
-print(temp.project.Open())
-#temp.CreateProject("Default Project")
-#temp.CreateProjectVariable("Path", "Path of the Project", "String", "Static", "/opt")
-
-#temp.StageSchema("Hello Universe", "Azure-BPD")
-#temp.CreateSchema("Azure Compute using BPD", 6)
-#temp.CreateSchemaVariable("TenantID", "Azure Tenant ID", "String", "Runtime")
-
-#temp.StageModule("Hello Universe", "Azure-BPD", "DataDisk")
-#temp.CreateModule("Managed Datadisk", 3, "Data")
-#temp.CreateModuleVariable("Disk Resource Name", "Name of the Disk", "String", "User")
-
-#temp.StageTemplate("Hello Universe", "Azure-BPD", "New-Deployment")
-#temp.CreateTemplate("Test Deployment")
-
-#print(temp.project.OpenProject())
-#print(temp.OpenSchema())
-#print(temp.OpenModule())
-#print(temp.OpenTemplate())
+temp.StageSchema("Azure-BPD")
+temp.StageModule("Data Disk")
+temp.StageTemplate("NewTemplate")

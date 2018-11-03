@@ -3,53 +3,37 @@ import Errors as err
 import Settings as props
 import FileHandler as fl
 import JSONHandler as js
-from SchemaClass import Schema
 
-class Module(Schema):
+class Module(object):
 
-    homeDIR=os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects")
-    moduleName=None
-    modulePath=None
+    Name=None
+    Path=None
+    SchemaMetaData=None
 
-    #def __init__(self, projectName, schemaName, moduleName):
-    #    self.moduleName=moduleName
-    #    super(Module, self).__init__(projectName, schemaName)
-    #    self.modulePath=os.path.join(self.schemaPath, moduleName)
-    def __ValidateArgs(self):
-        if self.moduleName==None:
-            raise err.Conflict("Module arguments are missing !")
-            return None
+    def Init(self, name, schemaPath):
+        self.Name=name
+        self.Path=os.path.join(schemaPath, name)
+        self.SchemaMetaData=os.path.join(schemaPath, "metadata.json")
 
-    @classmethod
-    def InitModule(self, projectName=None, schemaName=None, moduleName=None):
-        self.moduleName=moduleName
-        super(Module, self).InitSchema(projectName, schemaName)
-        self.modulePath=os.path.join(self.schemaPath, moduleName)
-
-    def CreateModule(self, moduleDescription, group, data):
-        self.__ValidateArgs()
-        # Validating Path
+    def Exists(self):
         try:
-            if self.OpenModule() is not None:
-                raise err.Conflict("A Module with the name '{0}' already exists !".format(self.moduleName))
-        except err.Conflict as ex:
-            if "Unable to find a Project" in str(ex): return None
-            if "Unable to find a Schema" in str(ex): return None
-            if "already exists" in str(ex):
-                raise err.Conflict("A Module with the name '{0}' already exists !".format(self.moduleName))
-                return None
+            self.Open()
+            return True
+        except:
+            return False
+
+    def _Create(self, description, group, groupCount, data):
         # Checking Group Count
-            groupCount=int(self.GetGroupCount())
-            if group > groupCount: 
-                raise err.Conflict("Group number '{0}' is greater than the allowed number of '{1}' !".format(group, groupCount))
-                return None
+        if group > groupCount:
+            raise err.Conflict("Group number '{0}' is greater than the allowed number of '{1}' !".format(group, groupCount))
+            return None
         # Creating Directory & File
         try:
-            jsonContent=js.Load(fl.Read(self.schemaMetaData))
-            jsonContent["Modules"][self.moduleName]=js.ModuleJSON(self.moduleName, moduleDescription, group)
-            fl.Write(self.schemaMetaData, js.Dump(jsonContent), True)
-            fl.Write(self.modulePath, data, True)
-            return "Module '{0}' created successfully !".format(self.moduleName)
+            jsonContent=js.Load(fl.Read(self.SchemaMetaData))
+            jsonContent["Modules"][self.Name]=js.ModuleJSON(self.Name, description, group)
+            fl.Write(self.SchemaMetaData, js.Dump(jsonContent), True)
+            fl.Write(self.Path, data, True)
+            return "Module '{0}' created successfully !".format(self.Name)
         except WindowsError:
             raise err.Conflict("There are errors in the metadata file. Synchronize the data to fix them !")
         except OSError:
@@ -58,30 +42,23 @@ class Module(Schema):
             os.removedirs(self.schemaPath)
         return None
 
-    def OpenModule(self):
-        self.__ValidateArgs()
+    def Open(self):
         # Opening Module
-        modules=self.GetModuleList()
-        if self.moduleName in modules:
-            return js.Load(fl.Read(self.schemaMetaData))["Modules"][self.moduleName]
-        else:
-            raise err.Conflict("Unable to find a Module with the name '{0}'".format(self.moduleName))
-            return None
+        return js.Load(fl.Read(self.SchemaMetaData))["Modules"][self.Name]
 
-    def GetModuleDescription(self):
-        jsonContent=self.OpenModule()
+    def GetDescription(self):
+        jsonContent=self.Open()
         return jsonContent["ModuleDescription"]
 
-    def GetModuleGroup(self):
-        jsonContent=self.OpenModule()
+    def GetGroup(self):
+        jsonContent=self.Open()
         return jsonContent["Group"]
 
-    def GetModuleVariables(self):
-        jsonContent=self.OpenModule()
+    def GetVariables(self):
+        jsonContent=self.Open()
         return jsonContent["ModuleVariables"]
 
-    def CreateModuleVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
-        self.__ValidateArgs()
+    def CreateVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
         # Validating Variable Type
         if variableMode == "Internal":
             raise err.Conflict("A Variable with the mode '{0}' is not support by Modules !".format(variableMode))
@@ -89,13 +66,13 @@ class Module(Schema):
         # Setting Value
         if variableMode != "Static":
             value = None
-        jsonContent=self.OpenModule()
+        jsonContent=self.Open()
         # Validating Uniquness
         if variableName in jsonContent["ModuleVariables"]:
             raise err.Conflict("A Module Variable with the name '{0}' already exists !".format(variableName))
             return None
         else:
             jsonContent=self.OpenSchema()
-            jsonContent["Modules"][self.moduleName]["ModuleVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
+            jsonContent["Modules"][self.Name]["ModuleVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
             fl.Write(self.schemaMetaData, js.Dump(jsonContent), True)
             return "Variable '{0}' created successfully !".format(variableName)

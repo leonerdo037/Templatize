@@ -11,21 +11,21 @@ class Project(object):
     Path=None
     MetaData=None
     
+    def Init(self, name):
+        self.Name=name
+        self.Path=os.path.join(self.homeDIR, name)
+        self.MetaData=os.path.join(self.Path, "metadata.json")
+
     def Exists(self):
         if os.path.exists(self.Path):
             return True
         else:
             return False
 
-    def Init(self, Name):
-        self.Name=Name
-        self.Path=os.path.join(self.homeDIR, Name)
-        self.MetaData=os.path.join(self.Path, "metadata.json")
-
-    def __Create(self, projectDescription):
+    def _Create(self, description):
         # Creating Directory & File
         os.makedirs(self.Path)
-        fl.Write(self.MetaData, js.ProjectJSON(self.Name, projectDescription, asJSON=True))
+        fl.Write(self.MetaData, js.ProjectJSON(self.Name, description, asJSON=True))
         return "Project '{0}' created successfully !".format(self.Name)
 
     def Open(self):
