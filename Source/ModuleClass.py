@@ -72,7 +72,7 @@ class Module(object):
             raise err.Conflict("A Module Variable with the name '{0}' already exists !".format(variableName))
             return None
         else:
-            jsonContent=self.OpenSchema()
+            jsonContent=js.Load(fl.Read(self.SchemaMetaData))
             jsonContent["Modules"][self.Name]["ModuleVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
-            fl.Write(self.schemaMetaData, js.Dump(jsonContent), True)
+            fl.Write(self.SchemaMetaData, js.Dump(jsonContent), True)
             return "Variable '{0}' created successfully !".format(variableName)

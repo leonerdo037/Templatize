@@ -95,21 +95,17 @@ def TemplateJSON(templateName, templateDescription, asJSON=False):
     output={
             'TemplateName': templateName,
             'TemplateDescription': templateDescription,
-            'Modules': []
+            'Modules': {},
+            'Variables': {}
            }
     if asJSON: return Dump(output)
     else: return output
 
-def GetJSON(jsonArray, searchKey, searchValue):
-    result=[i for i in jsonArray if i[searchKey]==searchValue]
-    # Validating existance of data
-    if len(result)==0:
-        return None
-    return result
-
-def GetJSONIndex(jsonArray, searchKey, searchValue):
-    result=[value for (value,key) in enumerate(jsonArray) if key[searchKey]==searchValue]
-    # Validating existance of data
-    if len(result)==0:
-        return None
-    return result
+def TemplateModuleJSON(moduleKey, moduleName, asJSON=False):
+    output={
+            'key': moduleKey,
+            'Name': moduleName,
+            'Variables': {}
+           }
+    if asJSON: return Dump(output)
+    else: return output

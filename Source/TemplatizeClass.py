@@ -85,7 +85,7 @@ class Templatize(object):
 
     def StageTemplate(self, name):
         self.__template=Template()
-        self.template.Init(name, self.schema.Path)
+        self.template.Init(name, self.schema.Path, self.project.GetVariables(), self.schema.GetVariables())
         # Checking Module's Existence
         if not self.template.Exists() or name not in self.schema.GetTemplateList():
             self.__template=None
@@ -120,7 +120,7 @@ class Templatize(object):
 
     def CreateTemplate(self, name, description):
         self.__template=Template()
-        self.template.Init(name, self.schema.Path)
+        self.template.Init(name, self.schema.Path, self.project.GetVariables(), self.schema.GetVariables())
         if self.template.Exists():
             self.__template=None
             raise err.Conflict("A Template with the name '{0}' already exists !".format(name))
@@ -139,7 +139,8 @@ temp.CreateSchema("Azure-BPD", "Azure Templates for Blueprint Designer", 6)
 temp.CreateModule("Data Disk", "Azure Managed Disk", 5, "<Data HERE>")
 temp.CreateTemplate("NewTemplate", "Test Template based on Azure")
 
-temp.StageProject("Hello Universe")
-temp.StageSchema("Azure-BPD")
-temp.StageModule("Data Disk")
-temp.StageTemplate("NewTemplate")
+temp.project.CreateVariable("Path", "Path of the target files", "String", "Runtime")
+temp.schema.CreateVariable("TenantID", "Azure Tenant GUID", "String", "Static", "0000-0000-0000")
+temp.module.CreateVariable("Disk Size", "Azure Data Disk Size", "Number", "User")
+
+print(temp.template.AddModules("One", "Disk Size"))
