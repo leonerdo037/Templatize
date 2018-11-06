@@ -65,7 +65,7 @@ class Templatize(object):
         # Checking Project's Existence
         if not self.project.Exists():
             self.__project=None
-            raise err.Conflict("Project not found !")
+            raise err.Conflict("Create the Project before staging!")
 
     def StageSchema(self, name):
         self.__schema=Schema()
@@ -73,7 +73,7 @@ class Templatize(object):
         # Checking Schema's Existence
         if not self.schema.Exists() or name not in self.project.GetSchemaList():
             self.__schema=None
-            raise err.Conflict("Schema not found !")
+            raise err.Conflict("Create the Schema before staging!")
 
     def StageModule(self, name):
         self.__module=Module()
@@ -81,7 +81,7 @@ class Templatize(object):
         # Checking Module's Existence
         if not self.module.Exists() or name not in self.schema.GetModuleList():
             self.__module=None
-            raise err.Conflict("Module not found !")
+            raise err.Conflict("Create the Module before staging!")
 
     def StageTemplate(self, name):
         self.__template=Template()
@@ -89,7 +89,7 @@ class Templatize(object):
         # Checking Module's Existence
         if not self.template.Exists() or name not in self.schema.GetTemplateList():
             self.__template=None
-            raise err.Conflict("Template not found !")
+            raise err.Conflict("Create the Template before staging!")
 
     def CreateProject(self, name, description):
         self.__project=Project()
@@ -127,20 +127,33 @@ class Templatize(object):
         else:
             return self.template._Create(description)
 
-import shutil
-try:
-    shutil.rmtree(os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects"))
-except:
-    pass
+# import shutil
+# try:
+    # shutil.rmtree(os.path.join(os.path.dirname(os.path.realpath(__file__)), "Projects"))
+# except:
+    # pass
 
-temp=Templatize()
-temp.CreateProject("Hello Universe", "Default Project")
-temp.CreateSchema("Azure-BPD", "Azure Templates for Blueprint Designer", 6)
-temp.CreateModule("Data Disk", "Azure Managed Disk", 5, "<Data HERE>")
-temp.CreateTemplate("NewTemplate", "Test Template based on Azure")
+# temp=Templatize()
+# temp.CreateProject("Hello Universe", "Default Project")
+# temp.CreateSchema("Azure-BPD", "Azure Templates for Blueprint Designer", 6)
+# temp.CreateModule("Data Disk", "Azure Managed Disk", 5, "<Data HERE>")
+# temp.CreateTemplate("NewTemplate", "Test Template based on Azure")
 
-temp.project.CreateVariable("Path", "Path of the target files", "String", "Runtime")
-temp.schema.CreateVariable("TenantID", "Azure Tenant GUID", "String", "Static", "0000-0000-0000")
-temp.module.CreateVariable("Disk Size", "Azure Data Disk Size", "Number", "User")
+# temp.project.CreateVariable("Path", "Path of the target files", "String", "Runtime")
+# temp.schema.CreateVariable("TenantID", "Azure Tenant GUID", "String", "Static", "0000-0000-0000")
+# temp.module.CreateVariable("Disk Size", "Azure Data Disk Size", "Number", "User")
 
-print(temp.template.AddModules("One", "Disk Size"))
+# print(temp.template.AddModules("One", "Disk Size"))
+
+# temp.CreateProject("Hello World", "Test Project")
+# temp.CreateProject("Hello Galaxy", "Test Project")
+# temp.CreateProject("Hello Multiverse", "Test Project")
+# temp.CreateProject("Hello Country", "Test Project")
+# temp.CreateProject("Hello Solar System", "Test Project")
+# temp.CreateProject("Hello State", "Test Project")
+# temp.CreateProject("Hello Continent", "Test Project")
+# temp.CreateProject("Hello City", "Test Project")
+# temp.CreateProject("Hello Street", "Test Project")
+# temp.CreateProject("Hello House", "Test Project")
+# temp.CreateProject("Hello Room", "Test Project")
+# temp.CreateProject("Hello Chair", "Test Project")
