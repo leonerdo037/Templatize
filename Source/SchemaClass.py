@@ -1,4 +1,5 @@
 import os
+import shutil
 import Errors as err
 import Settings as props
 import FileHandler as fl
@@ -8,7 +9,6 @@ class Schema(object):
 
     Name=None
     Path=None
-    MetaData=None
     MetaDataFile=None
     ProjectMetaData=None
 
@@ -17,7 +17,6 @@ class Schema(object):
         self.Path=os.path.join(projectPath, name)
         self.ProjectMetaData=os.path.join(projectPath, "metadata.json")
         self.MetaDataFile=os.path.join(self.Path, "metadata.json")
-        self.MetaData=self.Open() # Updating MetaData
 
     def Exists(self):
         if os.path.exists(self.Path):
@@ -35,7 +34,6 @@ class Schema(object):
             # Creating Schema Metadata
             jsonContent=js.SchemaJSON(self.Name, description, groupCount)
             fl.Write(self.MetaDataFile, js.Dump(jsonContent), True)
-            self.MetaData=jsonContent # Updating MetaData
             return "Schema '{0}' created successfully !".format(self.Name)
         except WindowsError:
             raise err.Conflict("There are errors in the metadata file. Synchronize the data to fix them !")
@@ -56,28 +54,33 @@ class Schema(object):
         else:
             jsonContent["SchemaVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
             fl.Write(self.MetaDataFile, js.Dump(jsonContent), True)
-            self.MetaData=jsonContent # Updating MetaData
             return "Variable '{0}' created successfully !".format(variableName)
 
     def Open(self):
         return fl.Read(self.MetaDataFile)
 
     def GetDescription(self):
-        jsonContent=js.Load(self.MetaData)
+        jsonContent=js.Load(self.Open())
         return jsonContent["SchemaDescription"]
 
     def GetModuleList(self):
-        jsonContent=js.Load(self.MetaData)
+        jsonContent=js.Load(self.Open())
         return jsonContent["Modules"]
 
     def GetTemplateList(self):
-        jsonContent=js.Load(self.MetaData)
+        jsonContent=js.Load(self.Open())
         return jsonContent["Templates"]
 
     def GetGroupCount(self):
-        jsonContent=js.Load(self.MetaData)
+        jsonContent=js.Load(self.Open())
         return jsonContent["GroupCount"]
 
     def GetVariables(self):
-        jsonContent=js.Load(self.MetaData)
+        jsonContent=js.Load(self.Open())
         return jsonContent["SchemaVariables"]
+
+    def Delete(self):
+        jsonContent=js.Load(fl.Read(self.ProjectMetaData))
+        jsonContent["Schemas"].remove(self.Name)
+        fl.Write(self.ProjectMetaData, js.Dump(jsonContent), True)
+        shutil.rmtree(self.Path)

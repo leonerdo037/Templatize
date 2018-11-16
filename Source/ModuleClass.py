@@ -42,22 +42,6 @@ class Module(object):
             os.removedirs(self.schemaPath)
         return None
 
-    def Open(self):
-        # Opening Module
-        return js.Load(fl.Read(self.SchemaMetaData))["Modules"][self.Name]
-
-    def GetDescription(self):
-        jsonContent=self.Open()
-        return jsonContent["ModuleDescription"]
-
-    def GetGroup(self):
-        jsonContent=self.Open()
-        return jsonContent["Group"]
-
-    def GetVariables(self):
-        jsonContent=self.Open()
-        return jsonContent["ModuleVariables"]
-
     def CreateVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
         # Validating Variable Type
         if variableMode == "Internal":
@@ -66,7 +50,7 @@ class Module(object):
         # Setting Value
         if variableMode != "Static":
             value = None
-        jsonContent=self.Open()
+        jsonContent=js.Load(self.Open())
         # Validating Uniquness
         if variableName in jsonContent["ModuleVariables"]:
             raise err.Conflict("A Module Variable with the name '{0}' already exists !".format(variableName))
@@ -76,3 +60,19 @@ class Module(object):
             jsonContent["Modules"][self.Name]["ModuleVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
             fl.Write(self.SchemaMetaData, js.Dump(jsonContent), True)
             return "Variable '{0}' created successfully !".format(variableName)
+
+    def Open(self):
+        # Opening Module
+        return js.Dump(js.Load(fl.Read(self.SchemaMetaData))["Modules"][self.Name])
+
+    def GetDescription(self):
+        jsonContent=js.Load(self.Open())
+        return jsonContent["ModuleDescription"]
+
+    def GetGroup(self):
+        jsonContent=js.Load(self.Open())
+        return jsonContent["Group"]
+
+    def GetVariables(self):
+        jsonContent=js.Load(self.Open())
+        return jsonContent["ModuleVariables"]
