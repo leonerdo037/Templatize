@@ -133,9 +133,6 @@ class Templatize(object):
 # except:
     # pass
 
-temp=Templatize()
-temp.StageProject("Hello Universe")
-temp.project.DeleteVariable("Path")
 # temp.CreateProject("Hello Universe", "Default Project")
 # temp.CreateSchema("Azure-BPD", "Azure Templates for Blueprint Designer", 6)
 # temp.CreateModule("Data Disk", "Azure Managed Disk", 5, "<Data HERE>")

@@ -69,6 +69,20 @@ class Project(object):
         jsonContent["ProjectDescription"] = NewValue
         fl.Write(self.MetaDataFile, js.Dump(jsonContent), True)
 
+    def EditVariable(self, variableName, variableDescription, variableType, variableMode, value=None):
+        # Validating Variable Type
+        if variableMode != "Static" and variableMode != "Runtime":
+            raise err.Conflict("A Variable with the mode '{0}' is not support by Projects !".format(variableMode))
+            return None
+        # Setting Value
+        if variableMode != "Static":
+            value = None
+        jsonContent=js.Load(self.Open())
+        # Validating Uniquness
+        jsonContent["ProjectVariables"][variableName]=(js.VariableJSON(variableName, variableDescription, variableType, variableMode, value))
+        fl.Write(self.MetaDataFile, js.Dump(jsonContent), True)
+        return "Variable '{0}' saved successfully !".format(variableName)
+
     def DeleteVariable(self, variableName):
         jsonContent=js.Load(self.Open())
         jsonContent["ProjectVariables"].pop(variableName)

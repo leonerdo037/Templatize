@@ -86,7 +86,7 @@ def VariableJSON(variableName, variableDescription, variableType, variableMode, 
             'VariableDescription': variableDescription,            
             'VariableType': variableType,
             'VariableMode': variableMode,
-            'Value': value
+            'VariableValue': value
            }
     if asJSON: return Dump(output)
     else: return output
